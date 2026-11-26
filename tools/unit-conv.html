@@ -45,6 +45,8 @@
   .conv-card.primary .v { color: var(--blue); }
   .conv-card .v em { font-style: normal; font-size: 15px; font-weight: 700; color: var(--muted); margin-left: 3px; }
   .quick-set button.is-on { border-color: var(--blue); color: var(--blue); background: var(--blue-soft); }
+  .segmented.four { grid-template-columns: repeat(4, 1fr); }
+  @media (max-width: 640px) { .segmented.four { grid-template-columns: repeat(2, 1fr); } }
 </style>
 </head>
 <body>
@@ -84,7 +86,7 @@
       </div>
 
       <div class="field">
-        <div class="segmented" role="radiogroup" aria-label="단위 종류" style="grid-template-columns:repeat(4,1fr)">
+        <div class="segmented four" role="radiogroup" aria-label="단위 종류">
           <input type="radio" name="mode" id="modeArea" value="area" checked>
           <label for="modeArea">① 평 ↔ ㎡</label>
           <input type="radio" name="mode" id="modeLength" value="length">
