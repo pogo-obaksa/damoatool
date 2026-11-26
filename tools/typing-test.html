@@ -428,7 +428,16 @@
     if (finished) return;
     var stats = computeStats();
     paint(stats);
-    if (stats.typed === target && target.length > 0) finish(stats);
+    if (stats.typed === target && target.length > 0) {
+      finish(stats);
+      return;
+    }
+    if (stats.n >= target.length) {
+      msgLine.hidden = false;
+      msgLine.innerHTML = "오타가 있습니다. 빨간 글자를 고쳐서 마지막까지 맞추면 기록이 저장됩니다.";
+    } else if (!msgLine.hidden) {
+      msgLine.hidden = true;
+    }
   }
 
   function startTicker() {
