@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>인스타·스레드 줄바꿈 변환기 & 예쁜 영문 폰트 변환 - 무료 | 다모아툴</title>
+<meta name="description" content="인스타그램·스레드에서 줄바꿈이 붙는 문제를 빈 줄과 투명 공백으로 해결하고, 영문·숫자를 굵게·필기체·이중선·원문자로 바꿔 복사하세요. 회원가입 없는 무료 변환기.">
+<meta name="keywords" content="인스타 줄바꿈, 스레드 줄바꿈, 인스타 캡션 줄바꿈, 예쁜 글씨, 폰트 변환기, 필기체 변환, 특수문자 폰트">
+<link rel="canonical" href="https://pogo-obaksa.github.io/damoatool/tools/font-style.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="인스타·스레드 줄바꿈 변환기 & 예쁜 폰트 변환 | 다모아툴">
+<meta property="og:description" content="줄바꿈이 사라지는 문제를 한 번에 해결하고, SNS용 예쁜 영문 폰트를 만들어 복사하세요.">
+<meta property="og:url" content="https://pogo-obaksa.github.io/damoatool/tools/font-style.html">
+<meta property="og:locale" content="ko_KR">
+<meta name="theme-color" content="#1d4ed8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231d4ed8'/%3E%3Ctext x='32' y='44' font-size='34' font-weight='700' text-anchor='middle' fill='white' font-family='sans-serif'%3E%EB%8B%A4%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="../css/style.css">
+<style>
+  .font-list { display: grid; gap: 10px; margin-top: 8px; }
+  .font-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 14px 12px 18px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+  }
+  .font-item .meta { flex: 0 0 108px; }
+  .font-item .meta b { display: block; font-size: 15.5px; color: var(--ink); }
+  .font-item .meta span { font-size: 13px; color: var(--muted); }
+  .font-item .preview {
+    flex: 1 1 auto; min-width: 0;
+    font-size: 20px; line-height: 1.5;
+    color: var(--ink);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    word-break: break-all;
+  }
+  .font-item .btn { flex: 0 0 auto; }
+  @media (max-width: 640px) {
+    .font-item { flex-wrap: wrap; gap: 8px 12px; }
+    .font-item .meta { flex: 1 1 100%; }
+    .font-item .preview { flex: 1 1 100%; font-size: 18px; white-space: normal; }
+    .font-item .btn { width: 100%; }
+  }
+  .mode-list { display: grid; gap: 10px; }
+  .mode-item {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 14px 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    background: #fff;
+    cursor: pointer;
+  }
+  .mode-item input { margin-top: 5px; width: 20px; height: 20px; accent-color: var(--blue); flex: 0 0 auto; }
+  .mode-item b { display: block; font-size: 16.5px; color: var(--ink); }
+  .mode-item span { font-size: 14.5px; color: var(--muted); line-height: 1.6; }
+  .mode-item:has(input:checked) { border-color: var(--blue); background: var(--blue-soft); }
+  .counter-line { font-size: 14.5px; color: var(--muted); margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="logo" href="../index.html">
+      <span class="logo-mark" aria-hidden="true">다</span>
+      <span>다모아툴<span class="logo-sub">생활이 편해지는 무료 웹툴</span></span>
+    </a>
+    <button class="nav-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mainNav"><span></span></button>
+    <nav class="main-nav" id="mainNav" aria-label="주요 메뉴">
+      <a href="../index.html">홈</a>
+      <a href="../index.html#tools">전체 도구</a>
+      <a href="../about.html">소개</a>
+      <a href="../privacy.html">개인정보</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="page-head">
+      <nav class="breadcrumb" aria-label="위치">
+        <a href="../index.html">홈</a><span class="sep">/</span><a href="../index.html#tools">텍스트·SNS</a><span class="sep">/</span><span>줄바꿈·폰트 변환</span>
+      </nav>
+      <h1>줄바꿈 변환기 & 예쁜 폰트 변환</h1>
+      <p class="lead">인스타그램·스레드에서 <b>줄바꿈이 사라지는 문제</b>를 해결하고, 영문·숫자를 굵게·필기체·원문자로 바꿔 바로 붙여 넣으세요.</p>
+    </div>
+
+    <div class="panel" style="margin-top:24px">
+      <div class="panel-head">
+        <div>
+          <h2>1. 인스타·스레드 줄바꿈 변환기</h2>
+          <p>문단 사이에 빈 줄을 넣어 캡션 줄바꿈이 유지되도록 만들어 줍니다.</p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="lineInput">원본 문장 붙여 넣기</label>
+        <textarea id="lineInput" placeholder="첫 번째 문단입니다.&#10;두 번째 문단입니다.&#10;세 번째 문단입니다."></textarea>
+        <span class="hint">줄바꿈(Enter)으로 문단을 나눠 입력하세요. 빈 줄이 여러 개면 하나로 정리됩니다.</span>
+      </div>
+
+      <div class="field">
+        <span class="field-label">변환 방식</span>
+        <div class="mode-list">
+          <label class="mode-item">
+            <input type="radio" name="lineMode" value="blank" checked>
+            <span><b>빈 줄 넣기 (기본)</b><span>문단과 문단 사이에 빈 줄을 한 줄 넣습니다. 인스타그램·스레드에서 가장 일반적으로 통하는 방법입니다.</span></span>
+          </label>
+          <label class="mode-item">
+            <input type="radio" name="lineMode" value="invisible">
+            <span><b>빈 줄 + 투명 공백</b><span>빈 줄에 보이지 않는 공백 문자(⠀)를 넣습니다. 빈 줄이 자동으로 지워지는 앱에서 확실하게 유지됩니다.</span></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="lineOutput">변환 결과</label>
+        <div class="copy-box">
+          <textarea id="lineOutput" readonly placeholder="원본 문장을 입력하면 결과가 여기에 표시됩니다."></textarea>
+          <button class="btn btn-primary btn-sm btn-copy" type="button" data-copy-target="lineOutput" data-copy-message="줄바꿈 문장을 복사했어요">복사</button>
+        </div>
+        <p class="counter-line" id="lineCounter">0자 · 0줄</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>2. 예쁜 영문·숫자 폰트 변환</h2>
+          <p>같은 글자를 유니코드 문자로 바꿔 SNS 프로필·캡션에 쓸 수 있게 합니다.</p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="fontInput">바꿀 문장 (영문·숫자)</label>
+        <input type="text" id="fontInput" placeholder="예: Hello 2026" value="Hello 2026" autocomplete="off">
+        <span class="hint">한글과 띄어쓰기는 그대로 유지됩니다. 영문 대소문자와 숫자만 모양이 바뀝니다.</span>
+      </div>
+
+      <div class="font-list" id="fontList"></div>
+      <p class="note">일부 앱은 특정 유니코드 문자를 표시하지 못해 네모(□)로 보일 수 있습니다. 중요한 프로필 이름보다는 캡션·댓글·소개글에 쓰는 편이 안전합니다.</p>
+    </div>
+
+    <section class="article">
+      <h2>인스타그램 줄바꿈, 왜 사라질까요</h2>
+      <p>인스타그램과 스레드는 캡션을 입력할 때 Enter 한 번으로 만든 줄바꿈을 게시 과정에서 하나의 띄어쓰기처럼 합쳐 버립니다. 그래서 편집 화면에서는 예쁘게 나뉘어 있던 문단이 막상 올리고 나면 한 덩어리로 붙어 보이는 일이 생깁니다. 이를 피하는 가장 간단한 방법이 <strong>문단 사이에 빈 줄을 하나 더 넣는 것</strong>입니다. 빈 줄이 있으면 앱이 그 지점을 문단 구분으로 인식해 줄을 나눠 줍니다.</p>
+      <p>위 변환기에 글을 붙여 넣고 "빈 줄 넣기"를 고르면, 여러 줄로 된 문장이 문단마다 빈 줄이 들어간 형태로 바뀝니다. 결과 상자의 <strong>복사</strong> 버튼을 누르고 인스타그램 캡션에 그대로 붙여 넣으면 됩니다. 만약 그래도 빈 줄이 사라진다면 "빈 줄 + 투명 공백"을 선택해 보세요. 빈 줄 자리에 보이지 않는 공백 문자를 넣어 앱이 빈 줄을 지우지 못하게 만드는 방식입니다. 눈에는 똑같이 비어 보이지만, 앱 입장에서는 글자가 있는 줄이라 지워지지 않습니다.</p>
+      <p>폰트 변환은 글자를 그림처럼 꾸미는 것이 아니라, 모양이 비슷한 다른 유니코드 문자로 바꾸는 원리입니다. 그래서 검색에는 잡히지 않을 수 있고, 화면 읽기 프로그램이 다르게 읽을 수도 있습니다. 프로필 이름이나 중요한 안내문에는 원래 글자를 쓰고, 캡션의 제목이나 강조 문구에만 사용하는 것을 권합니다.</p>
+
+      <h2>이럴 때 쓰면 좋아요</h2>
+      <ul>
+        <li><strong>인스타 카페·맛집 후기</strong> — 메뉴, 위치, 총평을 문단으로 나눠 가독성 있게 정리</li>
+        <li><strong>스레드 글</strong> — 한 줄짜리 생각을 여러 문단으로 나눠 읽기 편하게</li>
+        <li><strong>블로그 썸네일·프로필 이름</strong> — 𝗛𝗲𝗹𝗹𝗼처럼 굵은 글씨로 포인트 주기</li>
+        <li><strong>이벤트 안내문</strong> — ①②③ 원문자로 순서를 깔끔하게 표시</li>
+      </ul>
+    </section>
+
+    <section class="article">
+      <h2>자주 묻는 질문</h2>
+      <div class="faq">
+        <details>
+          <summary>빈 줄을 넣었는데도 인스타에서 붙어 보여요.</summary>
+          <div class="answer"><p>"빈 줄 + 투명 공백" 모드를 선택해 다시 변환해 보세요. 앱 버전에 따라 빈 줄만으로는 부족할 때가 있습니다. 그래도 안 되면 문단 사이에 마침표나 기호를 넣는 방법도 있습니다.</p></div>
+        </details>
+        <details>
+          <summary>한글도 예쁜 글씨로 바꿀 수 있나요?</summary>
+          <div class="answer"><p>한글은 유니코드에 모양이 다른 대체 글자가 거의 없어 변환되지 않습니다. 이 도구는 영문과 숫자만 바꾸며, 한글은 그대로 유지됩니다.</p></div>
+        </details>
+        <details>
+          <summary>변환한 글자를 검색하면 나오나요?</summary>
+          <div class="answer"><p>일반 검색에는 잘 잡히지 않습니다. 문자 자체가 다른 코드이기 때문입니다. 해시태그나 중요한 키워드는 원래 글자로 쓰는 편이 좋습니다.</p></div>
+        </details>
+        <details>
+          <summary>입력한 문장이 저장되나요?</summary>
+          <div class="answer"><p>아니요. 변환은 브라우저 안에서만 이루어지고 서버로 전송되지 않습니다. 새로 고치면 입력한 내용도 사라집니다.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <section class="related">
+      <h2>함께 쓰면 좋은 도구</h2>
+      <ul class="related-links">
+        <li><a href="emoji.html">이모지·특수기호 복사</a></li>
+        <li><a href="char-count.html">글자수·바이트 계산기</a></li>
+        <li><a href="led-board.html">모바일 LED 전광판</a></li>
+      </ul>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="logo" href="../index.html">
+          <span class="logo-mark" aria-hidden="true">다</span>
+          <span>다모아툴<span class="logo-sub">DamoaTool</span></span>
+        </a>
+        <p>이모지 복사부터 대출 이자 계산까지, 매일 쓰는 10가지 도구를 한곳에 모았습니다. 모든 계산과 변환은 이용자 브라우저 안에서만 처리되며 입력값은 서버로 전송되지 않습니다.</p>
+      </div>
+      <div class="footer-col">
+        <h2>텍스트·SNS</h2>
+        <ul>
+          <li><a href="emoji.html">이모지·특수기호 복사</a></li>
+          <li><a href="font-style.html">줄바꿈·폰트 변환</a></li>
+          <li><a href="char-count.html">글자수·바이트 계산</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>생활·시간</h2>
+        <ul>
+          <li><a href="roulette.html">랜덤 룰렛</a></li>
+          <li><a href="led-board.html">LED 전광판</a></li>
+          <li><a href="timer.html">집중 타이머</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>금융·세금</h2>
+        <ul>
+          <li><a href="loan-calc.html">대출 이자 계산</a></li>
+          <li><a href="savings-calc.html">예적금 이자 계산</a></li>
+          <li><a href="salary-calc.html">연봉 실수령액</a></li>
+          <li><a href="yearend-check.html">연말정산 체크</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 다모아툴(DamoaTool). 모든 도구는 무료입니다.</p>
+      <p><a href="../about.html">소개</a> · <a href="../terms.html">이용약관</a> · <a href="../privacy.html">개인정보처리방침</a> · 문의 rlatmdrhkd1@gmail.com</p>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/common.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- 줄바꿈 변환 ---------- */
+  var lineInput = document.getElementById("lineInput");
+  var lineOutput = document.getElementById("lineOutput");
+  var lineCounter = document.getElementById("lineCounter");
+
+  function convertLines() {
+    var raw = lineInput.value.replace(/\r\n/g, "\n");
+    var lines = raw.split("\n");
+    var paras = [];
+    for (var i = 0; i < lines.length; i++) {
+      var t = lines[i].replace(/\s+$/g, "");
+      if (t.trim() !== "") paras.push(t);
+    }
+    var mode = document.querySelector('input[name="lineMode"]:checked').value;
+    // 문단마다 빈 줄을 넣어, 앱이 한 번의 줄바꿈을 합쳐도 문단이 유지되게 합니다.
+    var sep = mode === "invisible" ? "\n\u2800\n" : "\n\n";
+    var out = paras.join(sep);
+    lineOutput.value = out;
+    var chars = out.replace(/\n/g, "").length;
+    var lineCount = out ? out.split("\n").length : 0;
+    lineCounter.textContent = chars.toLocaleString("ko-KR") + "자 · " + lineCount + "줄 (복사 버튼을 누르면 그대로 붙여 넣을 수 있어요)";
+  }
+
+  lineInput.addEventListener("input", convertLines);
+  var modeInputs = document.querySelectorAll('input[name="lineMode"]');
+  for (var m = 0; m < modeInputs.length; m++) modeInputs[m].addEventListener("change", convertLines);
+
+  /* ---------- 폰트 변환 ---------- */
+  function buildRangeMap(upper, lower, digit, exceptions) {
+    var map = {};
+    var A = 65, a = 97, z = 48;
+    for (var i = 0; i < 26; i++) {
+      map[String.fromCharCode(A + i)] = String.fromCodePoint(upper + i);
+      map[String.fromCharCode(a + i)] = String.fromCodePoint(lower + i);
+    }
+    if (digit) {
+      for (var d = 0; d < 10; d++) map[String.fromCharCode(z + d)] = String.fromCodePoint(digit + d);
+    }
+    if (exceptions) {
+      for (var k in exceptions) {
+        if (Object.prototype.hasOwnProperty.call(exceptions, k)) map[k] = exceptions[k];
+      }
+    }
+    return map;
+  }
+
+  function buildLiteralMap(upperStr, lowerStr) {
+    var map = {};
+    var U = Array.from(upperStr), L = Array.from(lowerStr);
+    for (var i = 0; i < 26; i++) {
+      map[String.fromCharCode(65 + i)] = U[i];
+      map[String.fromCharCode(97 + i)] = L[i];
+    }
+    return map;
+  }
+
+  var smallCaps = buildLiteralMap("ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘꞯʀꜱᴛᴜᴠᴡxʏᴢ", "ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘꞯʀꜱᴛᴜᴠᴡxʏᴢ");
+
+  var upside = {};
+  (function () {
+    var pairs = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    var flipped = "ɐqɔpǝɟƃɥᴉɾʞlɯuodbɹsʇnʌʍxʎz∀ᗺƆᗡƎℲ⅁HIſꓘ˥WNOԀΌᴚS⊥∩ΛMX⅄Z0ƖᄅƐㄣϛ9ㄥ86";
+    var f = Array.from(flipped);
+    for (var i = 0; i < pairs.length && i < f.length; i++) upside[pairs[i]] = f[i];
+    upside["?"] = "¿"; upside["!"] = "¡"; upside["."] = "˙"; upside[","] = "'";
+  })();
+
+  var STYLES = [
+    { name: "볼드", tag: "Bold", map: buildRangeMap(0x1D400, 0x1D41A, 0x1D7CE) },
+    { name: "이탤릭", tag: "Italic", map: buildRangeMap(0x1D434, 0x1D44E, null, { h: "\u210E" }) },
+    { name: "볼드 이탤릭", tag: "Bold Italic", map: buildRangeMap(0x1D468, 0x1D482, 0x1D7EC) },
+    { name: "필기체", tag: "Script", map: buildLiteralMap("𝒜ℬ𝒞𝒟ℰℱ𝒢ℋℐ𝒥𝒦ℒℳ𝒩𝒪𝒫𝒬ℛ𝒮𝒯𝒰𝒱𝒲𝒳𝒴𝒵", "𝒶𝒷𝒸𝒹ℯ𝒻ℊ𝒽𝒾𝒿𝓀𝓁𝓂𝓃ℴ𝓅𝓆𝓇𝓈𝓉𝓊𝓋𝓌𝓍𝓎𝓏") },
+    { name: "볼드 필기체", tag: "Bold Script", map: buildRangeMap(0x1D4D0, 0x1D4EA, null) },
+    { name: "이중선", tag: "Double", map: buildRangeMap(0x1D538, 0x1D552, 0x1D7D8, { C: "ℂ", H: "ℍ", N: "ℕ", P: "ℙ", Q: "ℚ", R: "ℝ", Z: "ℤ" }) },
+    { name: "고정폭", tag: "Mono", map: buildRangeMap(0x1D670, 0x1D68A, 0x1D7F6) },
+    { name: "원문자", tag: "Circle", map: buildRangeMap(0x24B6, 0x24D0, null, { "0": "⓪", "1": "①", "2": "②", "3": "③", "4": "④", "5": "⑤", "6": "⑥", "7": "⑦", "8": "⑧", "9": "⑨" }) },
+    { name: "전각 문자", tag: "Fullwidth", map: buildRangeMap(0xFF21, 0xFF41, 0xFF10, { " ": "\u3000" }) },
+    { name: "작은 대문자", tag: "Small Caps", map: smallCaps },
+    { name: "거꾸로", tag: "Upside", map: upside, reverse: true }
+  ];
+
+  var fontInput = document.getElementById("fontInput");
+  var fontList = document.getElementById("fontList");
+
+  function transform(text, style) {
+    var chars = Array.from(text);
+    var out = chars.map(function (ch) {
+      return Object.prototype.hasOwnProperty.call(style.map, ch) ? style.map[ch] : ch;
+    });
+    if (style.reverse) out.reverse();
+    return out.join("");
+  }
+
+  function renderFonts() {
+    var text = fontInput.value || "";
+    fontList.innerHTML = "";
+    STYLES.forEach(function (style) {
+      var result = text ? transform(text, style) : "";
+      var item = document.createElement("div");
+      item.className = "font-item";
+      item.innerHTML =
+        '<div class="meta"><b></b><span></span></div>' +
+        '<div class="preview"></div>' +
+        '<button class="btn btn-ghost btn-sm" type="button">복사</button>';
+      item.querySelector(".meta b").textContent = style.name;
+      item.querySelector(".meta span").textContent = style.tag;
+      var preview = item.querySelector(".preview");
+      preview.textContent = result || "문장을 입력하세요";
+      if (!result) preview.style.color = "#9ca3af";
+      item.querySelector("button").addEventListener("click", function () {
+        if (!result) { DT.toast("먼저 문장을 입력해 주세요"); return; }
+        DT.copy(result, style.name + " 글꼴로 복사했어요");
+      });
+      fontList.appendChild(item);
+    });
+  }
+
+  fontInput.addEventListener("input", renderFonts);
+
+  renderFonts();
+  convertLines();
+})();
+</script>
+</body>
+</html>

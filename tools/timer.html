@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>집중 타이머·뽀모도로 25분/5분 카운트다운 - 무료 | 다모아툴</title>
+<meta name="description" content="25분 집중·5분 휴식 뽀모도로 타이머와 원하는 시간 카운트다운. 시간이 끝나면 비프음으로 알려 드립니다. 설치·회원가입 없는 무료 타이머.">
+<meta name="keywords" content="뽀모도로 타이머, 집중 타이머, 카운트다운, 25분 타이머, 공부 타이머, 요리 타이머, 온라인 타이머">
+<link rel="canonical" href="https://pogo-obaksa.github.io/damoatool/tools/timer.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="집중 타이머·뽀모도로 | 다모아툴">
+<meta property="og:description" content="25분 집중, 5분 휴식. 시간이 끝나면 비프음으로 알려 주는 무료 타이머.">
+<meta property="og:url" content="https://pogo-obaksa.github.io/damoatool/tools/timer.html">
+<meta property="og:locale" content="ko_KR">
+<meta name="theme-color" content="#1d4ed8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231d4ed8'/%3E%3Ctext x='32' y='44' font-size='34' font-weight='700' text-anchor='middle' fill='white' font-family='sans-serif'%3E%EB%8B%A4%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="../css/style.css">
+<style>
+  .timer-tabs { display: flex; gap: 8px; margin-bottom: 24px; }
+  .timer-tabs button {
+    flex: 1 1 0; min-height: 54px; border-radius: 12px;
+    border: 1px solid var(--line-strong); background: #fff;
+    font-family: inherit; font-size: 17px; font-weight: 700; color: var(--ink-2); cursor: pointer;
+  }
+  .timer-tabs button[aria-selected="true"] { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .timer-face { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 6px 0 4px; }
+  .ring-wrap { position: relative; width: min(340px, 82vw); aspect-ratio: 1 / 1; }
+  .ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .ring-bg { fill: none; stroke: #eef2f7; stroke-width: 14; }
+  .ring-fg { fill: none; stroke: var(--blue); stroke-width: 14; stroke-linecap: round; transition: stroke-dashoffset .3s linear, stroke .3s ease; }
+  .ring-wrap.break .ring-fg { stroke: var(--emerald); }
+  .ring-inner {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 2px;
+  }
+  .phase-label {
+    display: inline-block; padding: 3px 12px; border-radius: 999px;
+    background: var(--blue-soft); color: var(--blue);
+    font-size: 14.5px; font-weight: 800; letter-spacing: 0;
+  }
+  .ring-wrap.break .phase-label { background: var(--emerald-soft); color: var(--emerald); }
+  .time-display {
+    font-size: clamp(52px, 12vw, 76px); font-weight: 800; color: var(--ink);
+    letter-spacing: -0.04em; line-height: 1.1; font-variant-numeric: tabular-nums;
+  }
+  .time-sub { font-size: 15px; color: var(--muted); font-weight: 600; }
+  .cycle-line { font-size: 15.5px; color: var(--muted); }
+  .cycle-line b { color: var(--emerald); }
+  .timer-actions { display: flex; gap: 10px; width: 100%; max-width: 420px; margin-top: 8px; }
+  .timer-actions .btn { flex: 1 1 0; }
+  .custom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .pomo-note { font-size: 15px; color: var(--muted); text-align: center; margin: 8px 0 0; }
+  .flash { animation: flashBg 0.9s ease 2; }
+  @keyframes flashBg { 0%,100% { background: #fff; } 50% { background: #fff7d6; } }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="logo" href="../index.html">
+      <span class="logo-mark" aria-hidden="true">다</span>
+      <span>다모아툴<span class="logo-sub">생활이 편해지는 무료 웹툴</span></span>
+    </a>
+    <button class="nav-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mainNav"><span></span></button>
+    <nav class="main-nav" id="mainNav" aria-label="주요 메뉴">
+      <a href="../index.html">홈</a>
+      <a href="../index.html#tools">전체 도구</a>
+      <a href="../about.html">소개</a>
+      <a href="../privacy.html">개인정보</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="page-head">
+      <nav class="breadcrumb" aria-label="위치">
+        <a href="../index.html">홈</a><span class="sep">/</span><a href="../index.html#tools">생활·시간</a><span class="sep">/</span><span>집중 타이머</span>
+      </nav>
+      <h1>집중 타이머·카운트다운</h1>
+      <p class="lead">25분 집중하고 5분 쉬는 뽀모도로, 또는 원하는 시간만큼 <b>카운트다운</b>. 끝나면 비프음으로 알려 드립니다.</p>
+    </div>
+
+    <div class="tool-layout" style="margin-top:24px">
+      <div class="panel">
+        <div class="timer-tabs" role="tablist" aria-label="타이머 종류">
+          <button type="button" role="tab" aria-selected="true" data-mode="pomodoro">뽀모도로 25 / 5</button>
+          <button type="button" role="tab" aria-selected="false" data-mode="custom">커스텀 타이머</button>
+        </div>
+
+        <div class="timer-face">
+          <div class="ring-wrap" id="ringWrap">
+            <svg viewBox="0 0 240 240" aria-hidden="true">
+              <circle class="ring-bg" cx="120" cy="120" r="104"></circle>
+              <circle class="ring-fg" id="ringFg" cx="120" cy="120" r="104" stroke-dasharray="653.45" stroke-dashoffset="0"></circle>
+            </svg>
+            <div class="ring-inner">
+              <span class="phase-label" id="phaseLabel">집중</span>
+              <span class="time-display" id="timeDisplay" aria-live="polite">25:00</span>
+              <span class="time-sub" id="timeSub">25분 집중 · 5분 휴식</span>
+            </div>
+          </div>
+          <p class="cycle-line" id="cycleLine">완료한 집중 세션 <b>0회</b></p>
+        </div>
+
+        <div class="timer-actions" style="margin-left:auto;margin-right:auto">
+          <button class="btn btn-primary" type="button" id="startBtn">시작</button>
+          <button class="btn btn-ghost" type="button" id="resetBtn">초기화</button>
+        </div>
+        <p class="pomo-note" id="statusNote">시작을 누르면 타이머가 돌아갑니다. 탭을 닫지 마세요.</p>
+      </div>
+
+      <div class="panel">
+        <div id="customPanel" hidden>
+          <div class="panel-head">
+            <div>
+              <h2>시간 직접 정하기</h2>
+              <p>분과 초를 입력하고 적용을 누르세요.</p>
+            </div>
+          </div>
+          <div class="custom-row">
+            <div class="field">
+              <label for="minInput">분</label>
+              <div class="input-unit"><input type="number" id="minInput" min="0" max="180" step="1" value="10"><span class="unit">분</span></div>
+            </div>
+            <div class="field">
+              <label for="secInput">초</label>
+              <div class="input-unit"><input type="number" id="secInput" min="0" max="59" step="1" value="0"><span class="unit">초</span></div>
+            </div>
+          </div>
+          <div class="quick-set" id="quickSet">
+            <button type="button" data-sec="60">1분</button>
+            <button type="button" data-sec="180">3분</button>
+            <button type="button" data-sec="300">5분</button>
+            <button type="button" data-sec="600">10분</button>
+            <button type="button" data-sec="1500">25분</button>
+            <button type="button" data-sec="2700">45분</button>
+            <button type="button" data-sec="3600">60분</button>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" type="button" id="applyBtn">이 시간으로 설정</button>
+          </div>
+          <p class="note">시간이 0이 되면 비프음이 세 번 울립니다. 휴대폰이 무음 모드면 소리가 나지 않을 수 있어요.</p>
+        </div>
+
+        <div id="pomoPanel">
+          <div class="panel-head">
+            <div>
+              <h2>뽀모도로 사용법</h2>
+              <p>25분 집중 → 5분 휴식의 반복</p>
+            </div>
+          </div>
+          <ol style="font-size:16.5px;color:var(--ink-2);line-height:1.8;margin:0;padding-left:1.2em">
+            <li>할 일을 하나 정하고 <strong>시작</strong>을 누릅니다.</li>
+            <li>25분 동안 한 가지에만 집중합니다.</li>
+            <li>끝나면 5분 쉬고, 다시 집중을 시작합니다.</li>
+            <li>4번 반복하면 15~30분 길게 쉬어 주세요.</li>
+          </ol>
+          <p class="note">집중이 끝나면 자동으로 휴식 시간으로 바뀝니다. 시작 버튼을 눌러야 카운트가 시작됩니다.</p>
+
+          <div class="field" style="margin-top:22px">
+            <label for="beepVolume">알림음 크기</label>
+            <div class="range-row" style="display:flex;align-items:center;gap:12px">
+              <input type="range" id="beepVolume" min="0" max="100" step="10" value="70">
+              <output id="volOut" style="flex:0 0 56px;text-align:right;font-weight:800;font-size:17px">70%</output>
+            </div>
+          </div>
+          <div class="btn-row" style="margin-top:14px">
+            <button class="btn btn-ghost btn-sm" type="button" id="testSound">알림음 미리 듣기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="article">
+      <h2>뽀모도로, 왜 25분일까요</h2>
+      <p>뽀모도로 기법은 1980년대 후반 이탈리아 학생이 토마토 모양 주방 타이머로 공부 시간을 재면서 시작됐습니다. 25분이라는 숫자에 특별한 과학이 있는 것은 아니지만, 사람이 한 가지 일에 온전히 집중할 수 있는 시간이 대략 20~30분이라는 경험칙과 잘 맞습니다. 짧게 끊어 집중하고 확실히 쉬는 리듬이 오래 앉아 있는 것보다 결과가 좋다는 것이 이 방법의 핵심입니다.</p>
+      <p>이 타이머는 집중이 끝나면 자동으로 5분 휴식으로 넘어갑니다. 휴식 시간에는 화면에서 눈을 때고 일어나 물을 마시거나 창밖을 보는 것이 좋습니다. 휴대폰을 다시 들여다보면 머리가 쉬지 못해 다음 집중이 흐트러집니다. 네 번의 집중이 끝나면 15~30분 정도 긴 휴식을 넣으면 하루 리듬을 유지하기 쉽습니다.</p>
+      <p>커스텀 타이머는 요리, 빨래, 운동 세트, 발표 준비처럼 정해진 시간이 필요한 일에 쓰세요. 1분·3분·5분 버튼으로 빠르게 설정할 수 있고, 알림음은 시작 버튼을 누른 뒤 소리가 나도록 되어 있어 모바일 브라우저에서도 문제없이 재생됩니다. 다만 휴대폰이 무음이거나 화면이 꺼지면 소리가 나지 않을 수 있으니, 중요한 알림은 화면을 켜 두는 편이 안전합니다.</p>
+
+      <h2>집중이 잘 되는 환경 만들기</h2>
+      <ul>
+        <li>시작 전에 물과 필요한 자료를 미리 준비합니다.</li>
+        <li>휴대폰 알림은 무음, 뒤집어 두는 편이 좋습니다.</li>
+        <li>25분 동안 손대지 않을 일 하나만 정합니다.</li>
+        <li>끝난 뒤에는 반드시 자리에서 일어나 5분을 쉽니다.</li>
+      </ul>
+    </section>
+
+    <section class="article">
+      <h2>자주 묻는 질문</h2>
+      <div class="faq">
+        <details>
+          <summary>소리가 나지 않아요.</summary>
+          <div class="answer"><p>휴대폰이 무음 모드이거나 브라우저 탭이 백그라운드에 있으면 소리가 나지 않을 수 있습니다. 볼륨을 확인하고, 타이머 탭을 열어 둔 채로 사용해 주세요. "알림음 미리 듣기"로 먼저 확인할 수 있습니다.</p></div>
+        </details>
+        <details>
+          <summary>탭을 닫으면 타이머가 멈추나요?</summary>
+          <div class="answer"><p>네. 브라우저 탭을 닫거나 휴대폰이 잠기면 카운트가 멈출 수 있습니다. 화면 자동 꺼짐 시간을 늘려 두면 좋습니다.</p></div>
+        </details>
+        <details>
+          <summary>집중 시간과 휴식 시간을 바꿀 수 있나요?</summary>
+          <div class="answer"><p>커스텀 탭에서 원하는 시간을 직접 설정할 수 있습니다. 25분·5분 고정이 아니라 50분 집중·10분 휴식처럼 쓰고 싶다면 커스텀 타이머를 이용하세요.</p></div>
+        </details>
+        <details>
+          <summary>완료 기록이 저장되나요?</summary>
+          <div class="answer"><p>아니요. 완료한 세션 수는 화면에만 표시되며, 새로 고치면 초기화됩니다. 서버로 전송되는 정보는 없습니다.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <section class="related">
+      <h2>함께 쓰면 좋은 도구</h2>
+      <ul class="related-links">
+        <li><a href="roulette.html">랜덤 룰렛</a></li>
+        <li><a href="led-board.html">모바일 LED 전광판</a></li>
+        <li><a href="char-count.html">글자수·바이트 계산기</a></li>
+      </ul>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="logo" href="../index.html">
+          <span class="logo-mark" aria-hidden="true">다</span>
+          <span>다모아툴<span class="logo-sub">DamoaTool</span></span>
+        </a>
+        <p>이모지 복사부터 대출 이자 계산까지, 매일 쓰는 10가지 도구를 한곳에 모았습니다. 모든 계산과 변환은 이용자 브라우저 안에서만 처리되며 입력값은 서버로 전송되지 않습니다.</p>
+      </div>
+      <div class="footer-col">
+        <h2>텍스트·SNS</h2>
+        <ul>
+          <li><a href="emoji.html">이모지·특수기호 복사</a></li>
+          <li><a href="font-style.html">줄바꿈·폰트 변환</a></li>
+          <li><a href="char-count.html">글자수·바이트 계산</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>생활·시간</h2>
+        <ul>
+          <li><a href="roulette.html">랜덤 룰렛</a></li>
+          <li><a href="led-board.html">LED 전광판</a></li>
+          <li><a href="timer.html">집중 타이머</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>금융·세금</h2>
+        <ul>
+          <li><a href="loan-calc.html">대출 이자 계산</a></li>
+          <li><a href="savings-calc.html">예적금 이자 계산</a></li>
+          <li><a href="salary-calc.html">연봉 실수령액</a></li>
+          <li><a href="yearend-check.html">연말정산 체크</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 다모아툴(DamoaTool). 모든 도구는 무료입니다.</p>
+      <p><a href="../about.html">소개</a> · <a href="../terms.html">이용약관</a> · <a href="../privacy.html">개인정보처리방침</a> · 문의 rlatmdrhkd1@gmail.com</p>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/common.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var CIRC = 2 * Math.PI * 104;
+  var FOCUS_SEC = 25 * 60;
+  var BREAK_SEC = 5 * 60;
+
+  var state = {
+    mode: "pomodoro",
+    phase: "focus",
+    total: FOCUS_SEC,
+    remainingMs: FOCUS_SEC * 1000,
+    endAt: null,
+    running: false,
+    cycles: 0,
+    raf: null
+  };
+
+  var ringWrap = document.getElementById("ringWrap");
+  var ringFg = document.getElementById("ringFg");
+  var display = document.getElementById("timeDisplay");
+  var phaseLabel = document.getElementById("phaseLabel");
+  var timeSub = document.getElementById("timeSub");
+  var cycleLine = document.getElementById("cycleLine");
+  var startBtn = document.getElementById("startBtn");
+  var statusNote = document.getElementById("statusNote");
+  var minInput = document.getElementById("minInput");
+  var secInput = document.getElementById("secInput");
+  var customPanel = document.getElementById("customPanel");
+  var pomoPanel = document.getElementById("pomoPanel");
+
+  ringFg.setAttribute("stroke-dasharray", CIRC.toFixed(2));
+
+  function pad(n) {
+    return (n < 10 ? "0" : "") + n;
+  }
+
+  function format(ms) {
+    var total = Math.ceil(ms / 1000);
+    var h = Math.floor(total / 3600);
+    var m = Math.floor((total % 3600) / 60);
+    var s = total % 60;
+    if (h > 0) return h + ":" + pad(m) + ":" + pad(s);
+    return pad(m) + ":" + pad(s);
+  }
+
+  function updateFace() {
+    display.textContent = format(state.remainingMs);
+    var ratio = state.total > 0 ? Math.max(0, Math.min(1, state.remainingMs / (state.total * 1000))) : 0;
+    ringFg.setAttribute("stroke-dashoffset", (CIRC * (1 - ratio)).toFixed(2));
+    ringWrap.classList.toggle("break", state.mode === "pomodoro" && state.phase === "break");
+    if (state.mode === "pomodoro") {
+      phaseLabel.textContent = state.phase === "focus" ? "집중" : "휴식";
+      timeSub.textContent = state.phase === "focus" ? "25분 집중 · 5분 휴식" : "5분 휴식 · 다음 집중 준비";
+      cycleLine.innerHTML = "완료한 집중 세션 <b>" + state.cycles + "회</b>";
+      document.title = (state.running ? format(state.remainingMs) + " · " : "") + (state.phase === "focus" ? "집중" : "휴식") + " | 다모아툴 타이머";
+    } else {
+      phaseLabel.textContent = "카운트다운";
+      timeSub.textContent = "설정한 시간";
+      document.title = (state.running ? format(state.remainingMs) + " · " : "") + "카운트다운 | 다모아툴 타이머";
+    }
+  }
+
+  /* ---------- 알림음 ---------- */
+  var audioCtx = null;
+
+  function ensureAudio() {
+    if (!audioCtx) {
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      if (Ctx) audioCtx = new Ctx();
+    }
+    if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    return audioCtx;
+  }
+
+  function beep(times) {
+    var ctx = ensureAudio();
+    if (!ctx) return;
+    var vol = (Number(document.getElementById("beepVolume").value) || 0) / 100;
+    var count = times || 3;
+    for (var i = 0; i < count; i++) {
+      var start = ctx.currentTime + i * 0.45;
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(i === count - 1 ? 1046 : 880, start);
+      gain.gain.setValueAtTime(0, start);
+      gain.gain.linearRampToValueAtTime(vol * 0.35, start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.32);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(start);
+      osc.stop(start + 0.34);
+    }
+  }
+
+  /* ---------- 타이머 동작 ---------- */
+  function tick() {
+    if (!state.running) return;
+    state.remainingMs = Math.max(0, state.endAt - Date.now());
+    updateFace();
+    if (state.remainingMs <= 0) {
+      finish();
+      return;
+    }
+    state.raf = setTimeout(tick, 200);
+  }
+
+  function start() {
+    if (state.running) {
+      pause();
+      return;
+    }
+    if (state.remainingMs <= 0) {
+      state.remainingMs = state.total * 1000;
+    }
+    ensureAudio();
+    state.endAt = Date.now() + state.remainingMs;
+    state.running = true;
+    startBtn.textContent = "일시정지";
+    statusNote.textContent = "진행 중입니다. 화면을 켜 두면 정확하게 동작합니다.";
+    tick();
+  }
+
+  function pause() {
+    state.running = false;
+    state.remainingMs = Math.max(0, state.endAt - Date.now());
+    if (state.raf) clearTimeout(state.raf);
+    startBtn.textContent = "계속";
+    statusNote.textContent = "잠시 멈췄습니다. 계속을 누르면 이어서 진행됩니다.";
+    updateFace();
+  }
+
+  function finish() {
+    state.running = false;
+    if (state.raf) clearTimeout(state.raf);
+    state.remainingMs = 0;
+    updateFace();
+    beep(3);
+    startBtn.textContent = "시작";
+    var doc = document.getElementById("ringWrap");
+    doc.classList.remove("flash");
+    void doc.offsetWidth;
+    doc.classList.add("flash");
+
+    if (state.mode === "pomodoro") {
+      if (state.phase === "focus") {
+        state.cycles += 1;
+        state.phase = "break";
+        state.total = BREAK_SEC;
+        state.remainingMs = BREAK_SEC * 1000;
+        statusNote.textContent = "집중 끝! 5분 쉬어 가세요. 시작을 누르면 휴식이 시작됩니다.";
+        DT.toast("집중 완료! 5분 휴식 시간이에요");
+      } else {
+        state.phase = "focus";
+        state.total = FOCUS_SEC;
+        state.remainingMs = FOCUS_SEC * 1000;
+        statusNote.textContent = "휴식 끝! 다음 집중을 시작해 보세요.";
+        DT.toast("휴식 완료! 다시 집중해 볼까요");
+      }
+      display.textContent = format(state.remainingMs);
+    } else {
+      statusNote.textContent = "시간이 다 되었습니다. 다시 시작을 누르면 처음부터 진행됩니다.";
+      DT.toast("시간이 다 되었어요!");
+    }
+    updateFace();
+  }
+
+  function reset() {
+    state.running = false;
+    if (state.raf) clearTimeout(state.raf);
+    if (state.mode === "pomodoro") {
+      state.phase = "focus";
+      state.total = FOCUS_SEC;
+      state.remainingMs = FOCUS_SEC * 1000;
+      statusNote.textContent = "처음 상태로 돌아왔습니다. 시작을 눌러 주세요.";
+    } else {
+      state.remainingMs = state.total * 1000;
+      statusNote.textContent = "입력한 시간으로 되돌렸습니다.";
+    }
+    startBtn.textContent = "시작";
+    updateFace();
+  }
+
+  function setMode(mode) {
+    state.mode = mode;
+    state.running = false;
+    if (state.raf) clearTimeout(state.raf);
+    var tabs = document.querySelectorAll(".timer-tabs button");
+    for (var i = 0; i < tabs.length; i++) {
+      tabs[i].setAttribute("aria-selected", tabs[i].getAttribute("data-mode") === mode ? "true" : "false");
+    }
+    customPanel.hidden = mode !== "custom";
+    pomoPanel.hidden = mode !== "pomodoro";
+    startBtn.textContent = "시작";
+    if (mode === "pomodoro") {
+      state.phase = "focus";
+      state.total = FOCUS_SEC;
+      state.remainingMs = FOCUS_SEC * 1000;
+      statusNote.textContent = "시작을 누르면 타이머가 돌아갑니다. 탭을 닫지 마세요.";
+    } else {
+      applyCustom(true);
+    }
+    updateFace();
+  }
+
+  function applyCustom(silent) {
+    var min = Math.max(0, Math.min(180, parseInt(minInput.value, 10) || 0));
+    var sec = Math.max(0, Math.min(59, parseInt(secInput.value, 10) || 0));
+    var total = min * 60 + sec;
+    if (total <= 0) {
+      DT.toast("1초 이상 입력해 주세요");
+      return false;
+    }
+    state.total = total;
+    state.remainingMs = total * 1000;
+    state.running = false;
+    if (state.raf) clearTimeout(state.raf);
+    startBtn.textContent = "시작";
+    if (!silent) {
+      statusNote.textContent = min + "분 " + (sec ? sec + "초" : "") + "로 설정했습니다.";
+      DT.toast(min + "분 " + (sec ? sec + "초" : "") + " 설정 완료");
+    }
+    updateFace();
+    return true;
+  }
+
+  document.getElementById("startBtn").addEventListener("click", start);
+  document.getElementById("resetBtn").addEventListener("click", reset);
+
+  var tabs = document.querySelectorAll(".timer-tabs button");
+  for (var t = 0; t < tabs.length; t++) {
+    tabs[t].addEventListener("click", function () {
+      setMode(this.getAttribute("data-mode"));
+    });
+  }
+
+  document.getElementById("applyBtn").addEventListener("click", function () {
+    if (applyCustom(false)) ensureAudio();
+  });
+
+  document.getElementById("quickSet").addEventListener("click", function (e) {
+    var btn = e.target.closest("button[data-sec]");
+    if (!btn) return;
+    var total = parseInt(btn.getAttribute("data-sec"), 10);
+    minInput.value = Math.floor(total / 60);
+    secInput.value = total % 60;
+    applyCustom(false);
+    ensureAudio();
+  });
+
+  document.getElementById("beepVolume").addEventListener("input", function () {
+    document.getElementById("volOut").textContent = this.value + "%";
+  });
+
+  document.getElementById("testSound").addEventListener("click", function () {
+    beep(1);
+  });
+
+  updateFace();
+})();
+</script>
+</body>
+</html>

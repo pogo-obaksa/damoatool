@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>랜덤 룰렛·제비뽑기 - 점심 메뉴·당직 순서 정하기 | 다모아툴</title>
+<meta name="description" content="항목을 넣고 버튼 한 번이면 룰렛이 돌아갑니다. 점심 메뉴, 당직 순서, 벌칙 정하기까지. 당첨 항목 제외 기능과 결과 기록이 있는 무료 랜덤 룰렛.">
+<meta name="keywords" content="룰렛 돌리기, 랜덤 뽑기, 제비뽑기, 점심 메뉴 정하기, 사다리 대신, 당직 순서, 추첨">
+<link rel="canonical" href="https://pogo-obaksa.github.io/damoatool/tools/roulette.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="랜덤 룰렛·제비뽑기 | 다모아툴">
+<meta property="og:description" content="항목을 넣고 돌리면 끝. 점심 메뉴부터 당직 순서까지 공정하게 뽑아 드립니다.">
+<meta property="og:url" content="https://pogo-obaksa.github.io/damoatool/tools/roulette.html">
+<meta property="og:locale" content="ko_KR">
+<meta name="theme-color" content="#1d4ed8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231d4ed8'/%3E%3Ctext x='32' y='44' font-size='34' font-weight='700' text-anchor='middle' fill='white' font-family='sans-serif'%3E%EB%8B%A4%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="../css/style.css">
+<style>
+  .roulette-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .wheel-holder { position: relative; width: 100%; max-width: 420px; aspect-ratio: 1 / 1; }
+  #wheel { width: 100%; height: 100%; display: block; }
+  .pointer {
+    position: absolute; top: -2px; left: 50%; transform: translateX(-50%);
+    width: 0; height: 0; z-index: 3;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-top: 24px solid #111827;
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,.15));
+  }
+  .winner-box {
+    width: 100%;
+    padding: 18px 20px;
+    border: 1px solid var(--blue-line);
+    border-radius: 14px;
+    background: linear-gradient(180deg,#f5f9ff,#eff4ff);
+    text-align: center;
+  }
+  .winner-box .k { display: block; font-size: 15px; font-weight: 700; color: var(--ink-2); }
+  .winner-box .v {
+    display: block; margin-top: 2px; min-height: 44px;
+    font-size: clamp(26px, 5vw, 34px); font-weight: 800; color: var(--blue);
+    letter-spacing: -0.03em; word-break: break-all;
+  }
+  .item-list { display: grid; gap: 8px; margin-bottom: 14px; }
+  .item-row { display: flex; gap: 8px; align-items: center; }
+  .item-row input[type="text"] { min-height: 50px; font-size: 17px; }
+  .item-row .del {
+    flex: 0 0 auto; width: 50px; height: 50px;
+    border: 1px solid var(--line-strong); border-radius: 12px;
+    background: #fff; color: var(--ink-2); font-size: 20px; line-height: 1;
+    cursor: pointer; font-family: inherit;
+  }
+  .item-row .del:hover { border-color: #dc2626; color: #dc2626; background: #fef2f2; }
+  .item-empty { font-size: 15px; color: var(--muted); padding: 6px 0 12px; }
+  .history { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+  .history li {
+    display: flex; justify-content: space-between; gap: 10px;
+    padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px;
+    background: #fff; font-size: 16px;
+  }
+  .history li b { font-weight: 700; }
+  .history li span { color: var(--muted); font-size: 14px; flex: 0 0 auto; }
+  .history-empty { font-size: 15px; color: var(--muted); }
+  .opt-line { display: flex; align-items: center; gap: 10px; margin-top: 4px; font-size: 16px; color: var(--ink-2); }
+  .opt-line input { width: 20px; height: 20px; accent-color: var(--blue); }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="logo" href="../index.html">
+      <span class="logo-mark" aria-hidden="true">다</span>
+      <span>다모아툴<span class="logo-sub">생활이 편해지는 무료 웹툴</span></span>
+    </a>
+    <button class="nav-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mainNav"><span></span></button>
+    <nav class="main-nav" id="mainNav" aria-label="주요 메뉴">
+      <a href="../index.html">홈</a>
+      <a href="../index.html#tools">전체 도구</a>
+      <a href="../about.html">소개</a>
+      <a href="../privacy.html">개인정보</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="page-head">
+      <nav class="breadcrumb" aria-label="위치">
+        <a href="../index.html">홈</a><span class="sep">/</span><a href="../index.html#tools">생활·시간</a><span class="sep">/</span><span>랜덤 룰렛</span>
+      </nav>
+      <h1>랜덤 룰렛·제비뽑기</h1>
+      <p class="lead">점심 메뉴, 당직 순서, 벌칙 정하기. 항목을 넣고 <b>돌리기</b>만 누르면 공정하게 뽑아 드립니다.</p>
+    </div>
+
+    <div class="tool-layout" style="margin-top:24px">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>항목 넣기</h2>
+            <p>2개 이상이면 바로 돌릴 수 있어요. (최대 20개)</p>
+          </div>
+        </div>
+
+        <div class="item-list" id="itemList"></div>
+        <p class="item-empty" id="itemEmpty" hidden>항목이 없습니다. 아래 버튼으로 추가해 주세요.</p>
+
+        <div class="btn-row" style="margin-top:0">
+          <button class="btn btn-ghost" type="button" id="addBtn">+ 항목 추가</button>
+          <button class="btn btn-ghost" type="button" id="resetBtn">기본값으로</button>
+        </div>
+
+        <div class="field" style="margin-top:22px">
+          <span class="field-label">빠른 예시</span>
+          <div class="quick-set" id="presetSet">
+            <button type="button" data-preset="food">점심 메뉴</button>
+            <button type="button" data-preset="duty">당직 순서</button>
+            <button type="button" data-preset="penalty">벌칙</button>
+            <button type="button" data-preset="yesno">찬성/반대</button>
+          </div>
+        </div>
+
+        <label class="opt-line" for="excludeWinner">
+          <input type="checkbox" id="excludeWinner">
+          <span>당첨된 항목은 다음 판에서 빼기</span>
+        </label>
+      </div>
+
+      <div class="panel">
+        <div class="roulette-wrap">
+          <div class="wheel-holder">
+            <div class="pointer" aria-hidden="true"></div>
+            <canvas id="wheel" role="img" aria-label="룰렛 판"></canvas>
+          </div>
+
+          <div class="winner-box" aria-live="polite">
+            <span class="k">당첨 결과</span>
+            <span class="v" id="winner">?</span>
+          </div>
+
+          <button class="btn btn-primary btn-block" type="button" id="spinBtn" style="min-height:60px;font-size:19px">룰렛 돌리기</button>
+          <p class="note" style="margin:0;width:100%;text-align:center">결과는 무작위로 정해지며, 조작이나 가중치는 없습니다.</p>
+        </div>
+
+        <div style="margin-top:24px">
+          <div class="panel-head" style="margin-bottom:10px">
+            <h2 style="font-size:18px">결과 기록</h2>
+            <button class="btn btn-ghost btn-sm" type="button" id="clearHistory">기록 지우기</button>
+          </div>
+          <ul class="history" id="historyList"></ul>
+          <p class="history-empty" id="historyEmpty">아직 돌린 기록이 없습니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <section class="article">
+      <h2>이럴 때 씁니다</h2>
+      <p>여럿이 모이면 결정하기 어려운 일이 한두 가지가 아닙니다. "오늘 뭐 먹지"부터 "이번 주 당직은 누구지"까지, 사람이 정하면 괜히 눈치가 보이고 시간만 흘러갑니다. 룰렛은 그런 순간에 판단을 화면에 맡기는 도구입니다. 항목을 넣고 버튼 한 번 누르면 몇 초 만에 결론이 나고, 누가 뽑혔든 "룰렛이 그랬다"는 말 한마디로 상황이 정리됩니다.</p>
+      <p>점심 메뉴처럼 후보가 많을 때는 5~8개 정도로 줄이는 것이 좋습니다. 너무 많으면 글자가 작아지고, 정작 아무거나 괜찮은 메뉴가 뽑혀도 아쉬울 수 있습니다. 회식 자리에서 순서를 정할 때는 이름을 넣고 <strong>당첨 항목은 다음 판에서 빼기</strong>를 켜 두면 한 사람이 두 번 뽑히지 않아 편합니다. 결과 기록은 최근 10판까지 남으므로 누가 무엇을 뽑았는지 나중에 확인할 수도 있습니다.</p>
+      <p>룰렛에 쓰이는 난수는 브라우저의 암호학적 난수 생성기를 사용합니다. 앞판의 결과가 다음 판에 영향을 주지 않으며, 특정 항목에 가중치를 주는 기능도 없습니다. 다만 게임이나 내기에서 큰 상금이 걸린 추첨이라면, 이런 도구 대신 공인된 추첨 방식을 쓰는 것이 좋습니다.</p>
+
+      <h2>더 공정하게 쓰는 방법</h2>
+      <ul>
+        <li>항목 이름은 짧게 — 8자 안팎이면 판 위에서도 잘 읽힙니다.</li>
+        <li>인원이 많으면 한 번에 8개 이하로 나눠 여러 번 돌리세요.</li>
+        <li>순서를 정할 때는 "당첨 항목 제외"를 켜고 인원수만큼 돌리면 됩니다.</li>
+      </ul>
+    </section>
+
+    <section class="article">
+      <h2>자주 묻는 질문</h2>
+      <div class="faq">
+        <details>
+          <summary>결과를 조작할 수는 없나요?</summary>
+          <div class="answer"><p>룰렛의 각 칸은 같은 넓이이고, 회전 각도와 당첨 칸은 무작위 난수로 정해집니다. 특정 항목이 더 잘 나오도록 만든 장치는 없습니다.</p></div>
+        </details>
+        <details>
+          <summary>항목은 몇 개까지 넣을 수 있나요?</summary>
+          <div class="answer"><p>최대 20개까지 넣을 수 있습니다. 다만 10개를 넘으면 글자가 작아지므로, 6~8개 정도가 보기 좋습니다.</p></div>
+        </details>
+        <details>
+          <summary>당첨 항목을 자동으로 지울 수 있나요?</summary>
+          <div class="answer"><p>"당첨된 항목은 다음 판에서 빼기"를 체크하면 결과가 나온 뒤 해당 항목이 목록에서 빠집니다. 순서를 정할 때 유용합니다.</p></div>
+        </details>
+        <details>
+          <summary>입력한 항목이 저장되나요?</summary>
+          <div class="answer"><p>아니요. 항목과 결과 기록은 브라우저 메모리에만 있고 서버로 전송되지 않습니다. 새로 고치면 기본값으로 돌아갑니다.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <section class="related">
+      <h2>함께 쓰면 좋은 도구</h2>
+      <ul class="related-links">
+        <li><a href="timer.html">집중 타이머·카운트다운</a></li>
+        <li><a href="led-board.html">모바일 LED 전광판</a></li>
+        <li><a href="emoji.html">이모지·특수기호 복사</a></li>
+      </ul>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="logo" href="../index.html">
+          <span class="logo-mark" aria-hidden="true">다</span>
+          <span>다모아툴<span class="logo-sub">DamoaTool</span></span>
+        </a>
+        <p>이모지 복사부터 대출 이자 계산까지, 매일 쓰는 10가지 도구를 한곳에 모았습니다. 모든 계산과 변환은 이용자 브라우저 안에서만 처리되며 입력값은 서버로 전송되지 않습니다.</p>
+      </div>
+      <div class="footer-col">
+        <h2>텍스트·SNS</h2>
+        <ul>
+          <li><a href="emoji.html">이모지·특수기호 복사</a></li>
+          <li><a href="font-style.html">줄바꿈·폰트 변환</a></li>
+          <li><a href="char-count.html">글자수·바이트 계산</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>생활·시간</h2>
+        <ul>
+          <li><a href="roulette.html">랜덤 룰렛</a></li>
+          <li><a href="led-board.html">LED 전광판</a></li>
+          <li><a href="timer.html">집중 타이머</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>금융·세금</h2>
+        <ul>
+          <li><a href="loan-calc.html">대출 이자 계산</a></li>
+          <li><a href="savings-calc.html">예적금 이자 계산</a></li>
+          <li><a href="salary-calc.html">연봉 실수령액</a></li>
+          <li><a href="yearend-check.html">연말정산 체크</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 다모아툴(DamoaTool). 모든 도구는 무료입니다.</p>
+      <p><a href="../about.html">소개</a> · <a href="../terms.html">이용약관</a> · <a href="../privacy.html">개인정보처리방침</a> · 문의 rlatmdrhkd1@gmail.com</p>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/common.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var COLORS = ["#1d4ed8", "#0f766e", "#2563eb", "#059669", "#1e40af", "#0d9488", "#3b82f6", "#047857"];
+  var PRESETS = {
+    food: ["치킨", "피자", "족발", "김치찌개", "돈까스", "쌀국수"],
+    duty: ["월요일", "화요일", "수요일", "목요일", "금요일"],
+    penalty: ["노래 한 곡", "커피 사기", "설거지", "애교 3종", "팔굽혀펴기 10회"],
+    yesno: ["찬성", "반대"]
+  };
+
+  var canvas = document.getElementById("wheel");
+  var ctx = canvas.getContext("2d");
+  var items = PRESETS.food.slice();
+  var rotation = 0;
+  var spinning = false;
+  var lastWinner = "";
+  var history = [];
+
+  var listEl = document.getElementById("itemList");
+  var winnerEl = document.getElementById("winner");
+  var spinBtn = document.getElementById("spinBtn");
+  var historyList = document.getElementById("historyList");
+  var historyEmpty = document.getElementById("historyEmpty");
+
+  function renderList() {
+    listEl.innerHTML = "";
+    items.forEach(function (value, index) {
+      var row = document.createElement("div");
+      row.className = "item-row";
+      var input = document.createElement("input");
+      input.type = "text";
+      input.value = value;
+      input.maxLength = 30;
+      input.setAttribute("aria-label", (index + 1) + "번 항목");
+      input.addEventListener("input", function () {
+        items[index] = input.value;
+        draw();
+      });
+      var del = document.createElement("button");
+      del.type = "button";
+      del.className = "del";
+      del.innerHTML = "&times;";
+      del.setAttribute("aria-label", (index + 1) + "번 항목 삭제");
+      del.addEventListener("click", function () {
+        if (items.length <= 2) {
+          DT.toast("항목은 2개 이상 있어야 해요");
+          return;
+        }
+        items.splice(index, 1);
+        renderList();
+        draw();
+      });
+      row.appendChild(input);
+      row.appendChild(del);
+      listEl.appendChild(row);
+    });
+    document.getElementById("itemEmpty").hidden = items.length !== 0;
+  }
+
+  function activeItems() {
+    return items.filter(function (v) { return v.trim() !== ""; });
+  }
+
+  function sizeCanvas() {
+    var rect = canvas.getBoundingClientRect();
+    var dpr = window.devicePixelRatio || 1;
+    var size = Math.max(240, Math.round(rect.width));
+    canvas.width = Math.round(size * dpr);
+    canvas.height = Math.round(size * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return size;
+  }
+
+  function draw() {
+    var list = activeItems();
+    var size = sizeCanvas();
+    var cx = size / 2;
+    var cy = size / 2;
+    var radius = size / 2 - 10;
+
+    ctx.clearRect(0, 0, size, size);
+
+    if (list.length === 0) {
+      ctx.fillStyle = "#f1f5f9";
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#6b7280";
+      ctx.font = "600 16px Pretendard, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("항목을 추가해 주세요", cx, cy);
+      return;
+    }
+
+    var seg = (Math.PI * 2) / list.length;
+    for (var i = 0; i < list.length; i++) {
+      var start = -Math.PI / 2 + i * seg + rotation;
+      var end = start + seg;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, radius, start, end);
+      ctx.closePath();
+      ctx.fillStyle = COLORS[i % COLORS.length];
+      ctx.fill();
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // 라벨 (왼쪽 절반은 글자가 거꾸로 보이지 않게 뒤집어 그립니다)
+      var mid = start + seg / 2;
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(mid);
+      var fontSize = list.length <= 6 ? 19 : list.length <= 10 ? 16 : 14;
+      ctx.font = "700 " + fontSize + "px Pretendard, 'Noto Sans KR', sans-serif";
+      ctx.fillStyle = "#ffffff";
+      ctx.textBaseline = "middle";
+      var label = list[i];
+      if (label.length > 12) label = label.slice(0, 11) + "…";
+      if (Math.cos(mid) < 0) {
+        ctx.rotate(Math.PI);
+        ctx.textAlign = "left";
+        ctx.fillText(label, -(radius - 18), 0);
+      } else {
+        ctx.textAlign = "right";
+        ctx.fillText(label, radius - 18, 0);
+      }
+      ctx.restore();
+    }
+
+    // 가운데 원
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius * 0.14, 0, Math.PI * 2);
+    ctx.fillStyle = "#ffffff";
+    ctx.fill();
+    ctx.strokeStyle = "#cbd5e1";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = "#111827";
+    ctx.font = "800 " + Math.round(radius * 0.1) + "px Pretendard, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("GO", cx, cy + 1);
+  }
+
+  function easeOutCubic(t) {
+    return 1 - Math.pow(1 - t, 3);
+  }
+
+  function addHistory(name) {
+    var now = new Date();
+    var time = ("0" + now.getHours()).slice(-2) + ":" + ("0" + now.getMinutes()).slice(-2);
+    history.unshift({ name: name, time: time });
+    if (history.length > 10) history.pop();
+    historyList.innerHTML = "";
+    history.forEach(function (h) {
+      var li = document.createElement("li");
+      var b = document.createElement("b");
+      b.textContent = h.name;
+      var s = document.createElement("span");
+      s.textContent = h.time;
+      li.appendChild(b);
+      li.appendChild(s);
+      historyList.appendChild(li);
+    });
+    historyEmpty.hidden = history.length !== 0;
+  }
+
+  function spin() {
+    if (spinning) return;
+    var list = activeItems();
+    if (list.length < 2) {
+      DT.toast("항목을 2개 이상 넣어 주세요");
+      return;
+    }
+    spinning = true;
+    spinBtn.disabled = true;
+    winnerEl.textContent = "…";
+
+    var index = Math.floor(Math.random() * list.length);
+    var seg = (Math.PI * 2) / list.length;
+    var target = -(index * seg + seg / 2);
+    var base = rotation + Math.PI * 2 * 6;
+    var delta = ((target - base) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+    var finalRotation = base + delta;
+    var from = rotation;
+    var distance = finalRotation - from;
+    var duration = 4200;
+    var startTime = null;
+
+    function frame(ts) {
+      if (startTime === null) startTime = ts;
+      var t = Math.min(1, (ts - startTime) / duration);
+      rotation = from + distance * easeOutCubic(t);
+      draw();
+      if (t < 1) {
+        requestAnimationFrame(frame);
+      } else {
+        spinning = false;
+        spinBtn.disabled = false;
+        rotation = finalRotation % (Math.PI * 2);
+        var winner = list[index];
+        winnerEl.textContent = winner;
+        lastWinner = winner;
+        addHistory(winner);
+        DT.toast("당첨: " + winner);
+        if (document.getElementById("excludeWinner").checked) {
+          var realIndex = items.indexOf(winner);
+          if (realIndex !== -1 && items.length > 2) {
+            items.splice(realIndex, 1);
+            renderList();
+            draw();
+          }
+        }
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  document.getElementById("addBtn").addEventListener("click", function () {
+    if (items.length >= 20) {
+      DT.toast("항목은 20개까지 넣을 수 있어요");
+      return;
+    }
+    items.push("항목 " + (items.length + 1));
+    renderList();
+    draw();
+    var inputs = listEl.querySelectorAll('input[type="text"]');
+    var last = inputs[inputs.length - 1];
+    if (last) { last.focus(); last.select(); }
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", function () {
+    items = PRESETS.food.slice();
+    renderList();
+    draw();
+  });
+
+  document.getElementById("presetSet").addEventListener("click", function (e) {
+    var btn = e.target.closest("button[data-preset]");
+    if (!btn) return;
+    var key = btn.getAttribute("data-preset");
+    if (PRESETS[key]) {
+      items = PRESETS[key].slice();
+      renderList();
+      draw();
+      winnerEl.textContent = "?";
+    }
+  });
+
+  document.getElementById("clearHistory").addEventListener("click", function () {
+    history = [];
+    historyList.innerHTML = "";
+    historyEmpty.hidden = false;
+  });
+
+  spinBtn.addEventListener("click", spin);
+
+  window.addEventListener("resize", draw);
+
+  renderList();
+  draw();
+})();
+</script>
+</body>
+</html>

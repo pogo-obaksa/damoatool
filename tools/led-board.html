@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>모바일 LED 전광판 - 응원·생일·매장 안내 문구 만들기 | 다모아툴</title>
+<meta name="description" content="휴대폰 화면을 LED 전광판으로 바꿔 보세요. 문구를 입력하고 글자 크기·속도·색을 고른 뒤 전체화면으로 크게 보여 줄 수 있습니다. 설치 없이 무료.">
+<meta name="keywords" content="LED 전광판, 모바일 전광판, 응원 문구, 생일 축하 전광판, 매장 안내판, 흘러가는 글씨">
+<link rel="canonical" href="https://pogo-obaksa.github.io/damoatool/tools/led-board.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="모바일 LED 전광판 | 다모아툴">
+<meta property="og:description" content="휴대폰을 LED 전광판으로. 문구·속도·색을 바꾸고 전체화면으로 크게 보여 주세요.">
+<meta property="og:url" content="https://pogo-obaksa.github.io/damoatool/tools/led-board.html">
+<meta property="og:locale" content="ko_KR">
+<meta name="theme-color" content="#1d4ed8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231d4ed8'/%3E%3Ctext x='32' y='44' font-size='34' font-weight='700' text-anchor='middle' fill='white' font-family='sans-serif'%3E%EB%8B%A4%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap">
+<link rel="stylesheet" href="../css/style.css">
+<style>
+  .led-stage {
+    position: relative;
+    width: 100%;
+    min-height: 220px;
+    aspect-ratio: 16 / 6;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #000;
+    display: flex;
+    align-items: center;
+    border: 8px solid #111827;
+    box-shadow: 0 8px 24px rgba(15,23,42,.14);
+    cursor: pointer;
+  }
+  .led-stage::after {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.18) 1px, transparent 1px);
+    background-size: 4px 4px;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .led-track {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    white-space: nowrap;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    will-change: transform;
+    transform: translate(100%, -50%);
+    z-index: 1;
+    padding-left: 12px;
+  }
+  .led-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 700px) { .led-controls { grid-template-columns: 1fr; } }
+  .swatches { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .swatch {
+    width: 38px; height: 38px; border-radius: 10px;
+    border: 2px solid var(--line-strong); cursor: pointer; padding: 0;
+  }
+  .swatch[aria-pressed="true"] { outline: 3px solid var(--blue); outline-offset: 2px; border-color: #fff; }
+  .range-row { display: flex; align-items: center; gap: 12px; }
+  .range-row output { flex: 0 0 76px; text-align: right; font-weight: 800; font-size: 17px; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .led-stage:fullscreen { border: 0; border-radius: 0; aspect-ratio: auto; height: 100%; }
+  .led-hint { font-size: 14.5px; color: var(--muted); margin: 10px 0 0; }
+  .fs-label { display: inline-flex; align-items: center; gap: 6px; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="logo" href="../index.html">
+      <span class="logo-mark" aria-hidden="true">다</span>
+      <span>다모아툴<span class="logo-sub">생활이 편해지는 무료 웹툴</span></span>
+    </a>
+    <button class="nav-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mainNav"><span></span></button>
+    <nav class="main-nav" id="mainNav" aria-label="주요 메뉴">
+      <a href="../index.html">홈</a>
+      <a href="../index.html#tools">전체 도구</a>
+      <a href="../about.html">소개</a>
+      <a href="../privacy.html">개인정보</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="page-head">
+      <nav class="breadcrumb" aria-label="위치">
+        <a href="../index.html">홈</a><span class="sep">/</span><a href="../index.html#tools">생활·시간</a><span class="sep">/</span><span>모바일 LED 전광판</span>
+      </nav>
+      <h1>모바일 LED 전광판</h1>
+      <p class="lead">휴대폰을 흔들어 응원하고, 생일을 축하하고, 매장 안내를 띄우세요. <b>전체화면</b>으로 돌리면 멀리서도 잘 보입니다.</p>
+    </div>
+
+    <div class="panel" style="margin-top:24px">
+      <div class="led-stage" id="stage" title="눌러서 전체화면">
+        <div class="led-track" id="track">다모아툴 LED 전광판</div>
+      </div>
+      <p class="led-hint">화면을 누르면 전체화면으로 전환됩니다. 문구가 화면보다 짧으면 가운데에 고정되고, 길면 오른쪽에서 흘러 들어옵니다.</p>
+
+      <div class="led-controls" style="margin-top:24px">
+        <div class="field" style="margin:0">
+          <label for="ledText">보여 줄 문구</label>
+          <textarea id="ledText" maxlength="120" style="min-height:96px" placeholder="예: 지훈아 생일 축하해!">지훈아 생일 축하해! 🎉</textarea>
+          <span class="hint">최대 120자. 줄바꿈은 자동으로 한 줄로 합쳐집니다.</span>
+        </div>
+
+        <div>
+          <div class="field">
+            <label for="ledSize">글자 크기</label>
+            <div class="range-row">
+              <input type="range" id="ledSize" min="40" max="200" step="4" value="96">
+              <output id="ledSizeOut">96px</output>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="ledSpeed">흐르는 속도</label>
+            <select id="ledSpeed">
+              <option value="60">느리게</option>
+              <option value="110" selected>보통</option>
+              <option value="190">빠르게</option>
+              <option value="300">아주 빠르게</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field" style="margin:0">
+          <span class="field-label">글자색</span>
+          <div class="swatches" id="textSwatches">
+            <button class="swatch" type="button" data-color="#ffffff" style="background:#ffffff" aria-label="흰색" aria-pressed="true"></button>
+            <button class="swatch" type="button" data-color="#facc15" style="background:#facc15" aria-label="노란색" aria-pressed="false"></button>
+            <button class="swatch" type="button" data-color="#4ade80" style="background:#4ade80" aria-label="초록색" aria-pressed="false"></button>
+            <button class="swatch" type="button" data-color="#38bdf8" style="background:#38bdf8" aria-label="하늘색" aria-pressed="false"></button>
+            <button class="swatch" type="button" data-color="#fb7185" style="background:#fb7185" aria-label="분홍색" aria-pressed="false"></button>
+            <button class="swatch" type="button" data-color="#fb923c" style="background:#fb923c" aria-label="주황색" aria-pressed="false"></button>
+          </div>
+          <div class="input-unit" style="margin-top:8px">
+            <input type="color" id="ledColor" value="#ffffff" aria-label="글자색 직접 선택">
+          </div>
+        </div>
+
+        <div class="field" style="margin:0">
+          <span class="field-label">배경색</span>
+          <div class="swatches" id="bgSwatches">
+            <button class="swatch" type="button" data-bg="#000000" style="background:#000000" aria-label="검정" aria-pressed="true"></button>
+            <button class="swatch" type="button" data-bg="#0b1f3a" style="background:#0b1f3a" aria-label="남색" aria-pressed="false"></button>
+            <button class="swatch" type="button" data-bg="#0f2e1d" style="background:#0f2e1d" aria-label="진초록" aria-pressed="false"></button>
+            <button class="swatch" type="button" data-bg="#3a0d14" style="background:#3a0d14" aria-label="진빨강" aria-pressed="false"></button>
+            <button class="swatch" type="button" data-bg="#262626" style="background:#262626" aria-label="진회색" aria-pressed="false"></button>
+            <button class="swatch" type="button" data-bg="#ffffff" style="background:#ffffff" aria-label="흰색" aria-pressed="false"></button>
+          </div>
+          <div class="input-unit" style="margin-top:8px">
+            <input type="color" id="ledBg" value="#000000" aria-label="배경색 직접 선택">
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" type="button" id="playBtn">멈추기</button>
+        <button class="btn btn-ghost" type="button" id="fullBtn">
+          <span class="fs-label"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>전체화면</span>
+        </button>
+      </div>
+      <p class="note">화면을 켜 둔 채로 사용하세요. 휴대폰이 잠기면 문구도 멈춥니다. 밝기는 기기 설정에서 조절하면 더 선명합니다.</p>
+    </div>
+
+    <section class="article">
+      <h2>이렇게 쓰면 좋습니다</h2>
+      <p>LED 전광판은 종이 피켓보다 눈에 잘 띄고, 문구를 바로 바꿀 수 있다는 장점이 있습니다. 콘서트·경기장 응원, 졸업식·생일 파티, 매장의 임시 안내, 아이 운동회, 심지어 차량 고장 시 뒤차에 보여 주는 안내판으로도 쓸 수 있습니다. 휴대폰만 있으면 되니 준비물이 없고, 문구를 고치고 싶을 때도 손가락으로 몇 번 입력하면 끝입니다.</p>
+      <p>가장 잘 보이는 조합은 <strong>검은 배경에 밝은 글자</strong>입니다. 흰 배경에 검은 글자는 멀리서 흐릿하게 보이고, 배터리도 더 빨리 닳습니다. 글자 크기는 화면 높이의 30~40% 정도가 적당하며, 문구가 길면 크기를 줄이거나 속도를 올려 한 번에 지나가도록 하세요. 120자를 넘기면 한 바퀴 도는 데 시간이 오래 걸려 읽기 어려워집니다.</p>
+      <p>문구가 화면보다 짧으면 가운데에 고정되어 한눈에 읽히고, 화면보다 길어지면 오른쪽에서 왼쪽으로 흘러갑니다. 속도 설정은 긴 문구에서 효과가 있습니다.</p>
+      <p>전체화면으로 전환하면 브라우저의 주소창과 버튼이 사라져 화면 전체가 전광판이 됩니다. 휴대폰을 가로로 돌리면 세로보다 두 배 이상 넓게 보이므로, 응원 문구처럼 짧고 큰 글씨에는 가로 모드를 권합니다. 밝은 낮 야외에서는 화면 밝기를 최대로 올려야 잘 보입니다.</p>
+
+      <h2>상황별 추천 설정</h2>
+      <ul>
+        <li><strong>경기장 응원</strong> — 노란 글자 / 검정 배경 / 크게 / 보통 속도</li>
+        <li><strong>생일 축하</strong> — 분홍 글자 / 검정 배경 / 크게 / 느리게</li>
+        <li><strong>매장 안내</strong> — 흰 글자 / 남색 배경 / 중간 크기 / 느리게</li>
+        <li><strong>차량 뒤 안내</strong> — 주황 글자 / 검정 배경 / 크게 / 빠르게</li>
+      </ul>
+    </section>
+
+    <section class="article">
+      <h2>자주 묻는 질문</h2>
+      <div class="faq">
+        <details>
+          <summary>글자가 흐르지 않고 멈춰 있어요.</summary>
+          <div class="answer"><p>"멈추기" 버튼이 눌린 상태인지 확인해 주세요. 버튼을 다시 누르면 "재생"으로 바뀌며 문구가 다시 흐릅니다. 문구를 바꾸면 자동으로 처음부터 다시 시작합니다.</p></div>
+        </details>
+        <details>
+          <summary>전체화면이 안 되는데요.</summary>
+          <div class="answer"><p>일부 앱 내부 브라우저(카카오톡·인스타그램 등)에서는 전체화면 기능이 제한됩니다. 크롬·사파리 같은 기본 브라우저에서 열어 주세요.</p></div>
+        </details>
+        <details>
+          <summary>화면이 꺼지면 어떻게 되나요?</summary>
+          <div class="answer"><p>휴대폰이 잠기면 브라우저가 멈추거나 화면이 꺼집니다. 기기 설정에서 화면 자동 꺼짐 시간을 늘리거나, 사용 중에는 화면을 계속 켜 두세요.</p></div>
+        </details>
+        <details>
+          <summary>입력한 문구가 저장되나요?</summary>
+          <div class="answer"><p>아니요. 문구와 설정은 브라우저 안에서만 처리되며 서버로 전송되지 않습니다.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <section class="related">
+      <h2>함께 쓰면 좋은 도구</h2>
+      <ul class="related-links">
+        <li><a href="timer.html">집중 타이머·카운트다운</a></li>
+        <li><a href="roulette.html">랜덤 룰렛</a></li>
+        <li><a href="emoji.html">이모지·특수기호 복사</a></li>
+      </ul>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="logo" href="../index.html">
+          <span class="logo-mark" aria-hidden="true">다</span>
+          <span>다모아툴<span class="logo-sub">DamoaTool</span></span>
+        </a>
+        <p>이모지 복사부터 대출 이자 계산까지, 매일 쓰는 10가지 도구를 한곳에 모았습니다. 모든 계산과 변환은 이용자 브라우저 안에서만 처리되며 입력값은 서버로 전송되지 않습니다.</p>
+      </div>
+      <div class="footer-col">
+        <h2>텍스트·SNS</h2>
+        <ul>
+          <li><a href="emoji.html">이모지·특수기호 복사</a></li>
+          <li><a href="font-style.html">줄바꿈·폰트 변환</a></li>
+          <li><a href="char-count.html">글자수·바이트 계산</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>생활·시간</h2>
+        <ul>
+          <li><a href="roulette.html">랜덤 룰렛</a></li>
+          <li><a href="led-board.html">LED 전광판</a></li>
+          <li><a href="timer.html">집중 타이머</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>금융·세금</h2>
+        <ul>
+          <li><a href="loan-calc.html">대출 이자 계산</a></li>
+          <li><a href="savings-calc.html">예적금 이자 계산</a></li>
+          <li><a href="salary-calc.html">연봉 실수령액</a></li>
+          <li><a href="yearend-check.html">연말정산 체크</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 다모아툴(DamoaTool). 모든 도구는 무료입니다.</p>
+      <p><a href="../about.html">소개</a> · <a href="../terms.html">이용약관</a> · <a href="../privacy.html">개인정보처리방침</a> · 문의 rlatmdrhkd1@gmail.com</p>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/common.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var stage = document.getElementById("stage");
+  var track = document.getElementById("track");
+  var textEl = document.getElementById("ledText");
+  var sizeEl = document.getElementById("ledSize");
+  var sizeOut = document.getElementById("ledSizeOut");
+  var speedEl = document.getElementById("ledSpeed");
+  var colorEl = document.getElementById("ledColor");
+  var bgEl = document.getElementById("ledBg");
+  var playBtn = document.getElementById("playBtn");
+
+  var playing = true;
+  var offset = 0;
+  var lastTs = null;
+  var rafId = null;
+  var staticMode = false;
+
+  function resetPosition() {
+    var stageW = stage.clientWidth;
+    var trackW = track.scrollWidth;
+    if (trackW <= stageW - 24) {
+      // 문구가 화면보다 짧으면 가운데에 고정합니다.
+      staticMode = true;
+      offset = Math.max(0, (stageW - trackW) / 2);
+    } else {
+      // 길면 오른쪽에서 들어와 왼쪽으로 흐릅니다.
+      staticMode = false;
+      offset = stageW;
+    }
+    track.style.transform = "translate(" + offset + "px, -50%)";
+  }
+
+  function applyStyle() {
+    track.textContent = textEl.value.replace(/\s*\n+\s*/g, " ").trim() || "문구를 입력하세요";
+    track.style.fontSize = sizeEl.value + "px";
+    track.style.color = colorEl.value;
+    track.style.textShadow = "0 0 10px " + hexToRgba(colorEl.value, 0.75) + ", 0 0 26px " + hexToRgba(colorEl.value, 0.35);
+    stage.style.background = bgEl.value;
+    sizeOut.textContent = sizeEl.value + "px";
+    requestAnimationFrame(resetPosition);
+  }
+
+  function hexToRgba(hex, alpha) {
+    var h = hex.replace("#", "");
+    if (h.length === 3) h = h.charAt(0) + h.charAt(0) + h.charAt(1) + h.charAt(1) + h.charAt(2) + h.charAt(2);
+    var r = parseInt(h.slice(0, 2), 16) || 0;
+    var g = parseInt(h.slice(2, 4), 16) || 0;
+    var b = parseInt(h.slice(4, 6), 16) || 0;
+    return "rgba(" + r + "," + g + "," + b + "," + alpha + ")";
+  }
+
+  function loop(ts) {
+    if (lastTs === null) lastTs = ts;
+    var dt = (ts - lastTs) / 1000;
+    lastTs = ts;
+    if (playing && !staticMode) {
+      var speed = Number(speedEl.value) || 110;
+      offset -= speed * dt;
+      var width = track.scrollWidth;
+      if (offset < -width) offset = stage.clientWidth;
+      track.style.transform = "translate(" + offset + "px, -50%)";
+    }
+    rafId = requestAnimationFrame(loop);
+  }
+
+  function setPressed(container, attr, value) {
+    var btns = container.querySelectorAll(".swatch");
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].setAttribute("aria-pressed", btns[i].getAttribute(attr) === value ? "true" : "false");
+    }
+  }
+
+  document.getElementById("textSwatches").addEventListener("click", function (e) {
+    var btn = e.target.closest("button[data-color]");
+    if (!btn) return;
+    colorEl.value = btn.getAttribute("data-color");
+    setPressed(this, "data-color", colorEl.value);
+    applyStyle();
+  });
+
+  document.getElementById("bgSwatches").addEventListener("click", function (e) {
+    var btn = e.target.closest("button[data-bg]");
+    if (!btn) return;
+    bgEl.value = btn.getAttribute("data-bg");
+    setPressed(this, "data-bg", bgEl.value);
+    applyStyle();
+  });
+
+  colorEl.addEventListener("input", function () {
+    setPressed(document.getElementById("textSwatches"), "data-color", colorEl.value);
+    applyStyle();
+  });
+  bgEl.addEventListener("input", function () {
+    setPressed(document.getElementById("bgSwatches"), "data-bg", bgEl.value);
+    applyStyle();
+  });
+
+  textEl.addEventListener("input", applyStyle);
+  sizeEl.addEventListener("input", function () {
+    sizeOut.textContent = sizeEl.value + "px";
+    track.style.fontSize = sizeEl.value + "px";
+    requestAnimationFrame(resetPosition);
+  });
+
+  playBtn.addEventListener("click", function () {
+    playing = !playing;
+    playBtn.textContent = playing ? "멈추기" : "재생";
+  });
+
+  function toggleFullscreen() {
+    var doc = document;
+    var isFs = doc.fullscreenElement || doc.webkitFullscreenElement;
+    if (!isFs) {
+      if (stage.requestFullscreen) stage.requestFullscreen();
+      else if (stage.webkitRequestFullscreen) stage.webkitRequestFullscreen();
+      else DT.toast("이 브라우저에서는 전체화면을 지원하지 않아요");
+    } else {
+      if (doc.exitFullscreen) doc.exitFullscreen();
+      else if (doc.webkitExitFullscreen) doc.webkitExitFullscreen();
+    }
+  }
+
+  document.getElementById("fullBtn").addEventListener("click", toggleFullscreen);
+  stage.addEventListener("click", toggleFullscreen);
+
+  document.addEventListener("fullscreenchange", function () {
+    setTimeout(applyStyle, 120);
+  });
+
+  window.addEventListener("resize", function () {
+    resetPosition();
+  });
+
+  applyStyle();
+  rafId = requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

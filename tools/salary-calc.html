@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>연봉 실수령액 계산기 2026 - 4대보험·소득세 공제 내역 | 다모아툴</title>
+<meta name="description" content="2026년 4대보험 요율(국민연금 4.75%, 건강보험 3.595%, 장기요양, 고용보험 0.9%)과 근로소득 간이세액표를 반영해 월 실수령액과 공제 내역을 계산합니다.">
+<meta name="keywords" content="연봉 실수령액, 실수령액 계산기, 4대보험 계산, 2026 4대보험 요율, 월급 실수령액, 소득세 계산, 간이세액표, 연봉 3600 실수령">
+<link rel="canonical" href="https://pogo-obaksa.github.io/damoatool/tools/salary-calc.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="연봉 실수령액 계산기 2026 | 다모아툴">
+<meta property="og:description" content="2026년 4대보험 요율과 간이세액표로 월 실수령액과 공제 내역을 계산합니다.">
+<meta property="og:url" content="https://pogo-obaksa.github.io/damoatool/tools/salary-calc.html">
+<meta property="og:locale" content="ko_KR">
+<meta name="theme-color" content="#1d4ed8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231d4ed8'/%3E%3Ctext x='32' y='44' font-size='34' font-weight='700' text-anchor='middle' fill='white' font-family='sans-serif'%3E%EB%8B%A4%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="../css/style.css">
+<style>
+  .rate-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .rate-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: 999px;
+    background: #f1f5f9; color: var(--ink-2);
+    font-size: 14.5px; font-weight: 600;
+  }
+  .rate-chip b { color: var(--blue); }
+  .deduct-table td:nth-child(2) { color: var(--muted); font-size: 15px; }
+  .deduct-table tfoot td { background: #f8fafc; font-weight: 800; border-top: 2px solid var(--line); }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 560px) { .two-col { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="logo" href="../index.html">
+      <span class="logo-mark" aria-hidden="true">다</span>
+      <span>다모아툴<span class="logo-sub">생활이 편해지는 무료 웹툴</span></span>
+    </a>
+    <button class="nav-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mainNav"><span></span></button>
+    <nav class="main-nav" id="mainNav" aria-label="주요 메뉴">
+      <a href="../index.html">홈</a>
+      <a href="../index.html#tools">전체 도구</a>
+      <a href="../about.html">소개</a>
+      <a href="../privacy.html">개인정보</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="page-head">
+      <nav class="breadcrumb" aria-label="위치">
+        <a href="../index.html">홈</a><span class="sep">/</span><a href="../index.html#tools">금융·세금</a><span class="sep">/</span><span>연봉 실수령액 계산기</span>
+      </nav>
+      <h1>연봉 실수령액 계산기</h1>
+      <p class="lead">2026년 4대보험 요율과 근로소득 간이세액표를 반영해 <b>통장에 들어오는 금액</b>과 공제 내역을 계산합니다.</p>
+    </div>
+
+    <div class="tool-layout" style="margin-top:24px">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>급여 조건</h2>
+            <p>연봉이나 월급을 넣으면 바로 계산됩니다.</p>
+          </div>
+        </div>
+
+        <div class="segmented" style="margin-bottom:20px">
+          <input type="radio" name="basis" id="basisYear" value="year" checked>
+          <label for="basisYear">연봉으로 입력</label>
+          <input type="radio" name="basis" id="basisMonth" value="month">
+          <label for="basisMonth">월급으로 입력</label>
+        </div>
+
+        <div class="field">
+          <label for="pay" id="payLabel">연봉</label>
+          <div class="input-unit">
+            <input type="text" id="pay" inputmode="numeric" value="36,000,000" autocomplete="off">
+            <span class="unit" id="payUnit">원</span>
+          </div>
+          <div class="quick-set" id="paySet">
+            <button type="button" data-pay="30000000">3,000만</button>
+            <button type="button" data-pay="36000000">3,600만</button>
+            <button type="button" data-pay="44000000">4,400만</button>
+            <button type="button" data-pay="52000000">5,200만</button>
+            <button type="button" data-pay="60000000">6,000만</button>
+            <button type="button" data-pay="100000000">1억</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="nontax">월 비과세액</label>
+          <div class="input-unit">
+            <input type="text" id="nontax" inputmode="numeric" value="200,000">
+            <span class="unit">원</span>
+          </div>
+          <span class="hint">식대는 월 20만 원까지 비과세입니다. 비과세가 없다면 0을 넣으세요.</span>
+        </div>
+
+        <div class="two-col">
+          <div class="field">
+            <label for="family">부양가족 수 (본인 포함)</label>
+            <select id="family">
+              <option value="1" selected>1명 (본인만)</option>
+              <option value="2">2명</option>
+              <option value="3">3명</option>
+              <option value="4">4명</option>
+              <option value="5">5명</option>
+              <option value="6">6명</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="children">8~20세 자녀 수</label>
+            <select id="children">
+              <option value="0" selected>없음</option>
+              <option value="1">1명</option>
+              <option value="2">2명</option>
+              <option value="3">3명 이상</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" type="button" id="calcBtn">계산하기</button>
+          <button class="btn btn-ghost" type="button" id="resetBtn">초기화</button>
+        </div>
+
+        <div class="rate-chips" aria-label="2026년 근로자 부담 요율">
+          <span class="rate-chip">국민연금 <b>4.75%</b></span>
+          <span class="rate-chip">건강보험 <b>3.595%</b></span>
+          <span class="rate-chip">장기요양 <b>건보료의 13.14%</b></span>
+          <span class="rate-chip">고용보험 <b>0.9%</b></span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>월 실수령액</h2>
+            <p id="condLine">연봉 3,600만 원 · 부양가족 1명 · 비과세 20만 원</p>
+          </div>
+        </div>
+
+        <div class="result emerald">
+          <span class="label">월 실수령액 (예상)</span>
+          <span class="value" id="netMonth">-</span>
+          <span class="sub" id="netSub">세전 월급에서 4대보험과 세금을 뺀 금액입니다.</span>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat"><span class="k">월 세전 급여</span><span class="v" id="grossMonth">-</span></div>
+          <div class="stat"><span class="k">월 공제 합계</span><span class="v" id="deductTotal">-</span></div>
+          <div class="stat"><span class="k">연 실수령액</span><span class="v" id="netYear">-</span></div>
+        </div>
+
+        <p class="summary-line" id="splitLine" style="font-size:15.5px;color:var(--muted);margin-top:14px"></p>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:22px">
+      <div class="panel-head">
+        <div>
+          <h2>공제 내역</h2>
+          <p>2026년 요율 기준 근로자 부담분입니다.</p>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="deduct-table rt">
+          <thead>
+            <tr><th>항목</th><th>계산 기준</th><th>월 공제액</th></tr>
+          </thead>
+          <tbody id="deductBody">
+            <tr><td colspan="3" style="text-align:center;color:var(--muted)">급여를 입력하면 표시됩니다.</td></tr>
+          </tbody>
+          <tfoot id="deductFoot"></tfoot>
+        </table>
+      </div>
+      <p class="table-note">소득세는 국세청 근로소득 간이세액표(2026. 3. 1. 이후 지급분)를 구간별로 보간해 계산한 근사치입니다. 실제 원천징수액은 회사가 신고한 보수월액, 원천징수 비율(80·100·120%), 각종 공제에 따라 달라집니다.</p>
+    </div>
+
+    <section class="article">
+      <h2>연봉에서 실수령액까지, 무엇이 빠지나요</h2>
+      <p>연봉 계약서에 적힌 금액은 세금과 보험료를 떼기 전 금액입니다. 매달 통장에 들어오는 돈은 여기서 <strong>4대보험</strong>(국민연금·건강보험·장기요양보험·고용보험)과 <strong>소득세·지방소득세</strong>를 뺀 나머지입니다. 2026년 근로자 부담 요율은 국민연금 4.75%, 건강보험 3.595%, 장기요양보험은 건강보험료의 13.14%, 고용보험 0.9%로, 네 가지를 합치면 월급의 약 9.7% 수준입니다. 여기에 소득세가 더해지므로 실제 공제율은 보통 10~15% 사이가 됩니다.</p>
+      <p>계산의 출발점은 <strong>비과세를 뺀 과세 대상 월급</strong>입니다. 식대처럼 월 20만 원까지 비과세로 인정되는 항목이 있으면 그만큼 보험료와 세금이 줄어듭니다. 국민연금은 기준소득월액 상한(2026년 7월~2027년 6월 659만 원)과 하한(41만 원)이 있어 월급이 아무리 높아도 보험료가 무한정 늘지 않습니다.</p>
+      <p>소득세는 국세청의 <strong>근로소득 간이세액표</strong>로 매달 원천징수합니다. 이 표는 월급여와 부양가족 수(본인 포함)를 기준으로 세액을 정해 두었고, 8~20세 자녀가 있으면 자녀 수에 따라 세액을 더 빼 줍니다. 연말정산은 이렇게 미리 낸 세금을 정산하는 절차이므로, 이 계산기의 소득세는 "매달 떼는 금액"에 가깝고 최종 세금은 부양가족·의료비·카드 사용액 등에 따라 달라집니다.</p>
+
+      <h2>2026년 4대보험 요율</h2>
+      <div class="table-wrap" style="margin-bottom:16px">
+        <table>
+          <thead><tr><th>보험</th><th>전체 요율</th><th>근로자 부담</th></tr></thead>
+          <tbody>
+            <tr><td>국민연금</td><td>9.5%</td><td>4.75%</td></tr>
+            <tr><td>건강보험</td><td>7.19%</td><td>3.595%</td></tr>
+            <tr><td>장기요양보험</td><td>건강보험료의 13.14%</td><td>절반</td></tr>
+            <tr><td>고용보험 (실업급여)</td><td>1.8%</td><td>0.9%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>산재보험과 고용보험의 고용안정·직업능력개발분은 사업주가 전액 부담하므로 근로자 급여에서 빠지지 않습니다. 회사가 부담하는 금액은 근로자 부담분과 별개로, 대략 월급의 11% 안팎입니다.</p>
+    </section>
+
+    <section class="article">
+      <h2>자주 묻는 질문</h2>
+      <div class="faq">
+        <details>
+          <summary>계산 결과가 급여명세서와 조금 달라요.</summary>
+          <div class="answer"><p>회사가 신고한 보수월액, 식대 등 비과세 항목, 상여금 지급 시기, 원천징수 비율(80·100·120%)에 따라 차이가 납니다. 특히 상여금이 있는 달은 소득세가 더 많이 떼일 수 있습니다.</p></div>
+        </details>
+        <details>
+          <summary>부양가족 수는 어떻게 세나요?</summary>
+          <div class="answer"><p>본인을 포함해 기본공제 대상이 되는 배우자, 자녀, 부모를 셉니다. 소득이 있는 가족은 대부분 제외됩니다. 정확한 대상은 국세청 안내를 확인하세요.</p></div>
+        </details>
+        <details>
+          <summary>연말정산하면 세금을 더 돌려받나요?</summary>
+          <div class="answer"><p>카드 사용, 의료비, 월세 같은 공제 항목이 많으면 돌려받을 수 있습니다. 반대로 부양가족이 줄었거나 상여가 많았다면 더 낼 수도 있습니다. 연말정산 공제 체크기로 미리 확인해 보세요.</p></div>
+        </details>
+        <details>
+          <summary>이 계산기의 소득세는 정확한가요?</summary>
+          <div class="answer"><p>국세청 고시 간이세액표의 구간 값을 바탕으로 월급여·부양가족·자녀 수를 반영한 근사치입니다. 표에 없는 구간은 보간하고, 1,000만 원을 넘는 월급여는 추정으로 계산합니다.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <section class="related">
+      <h2>함께 쓰면 좋은 도구</h2>
+      <ul class="related-links">
+        <li><a href="yearend-check.html">연말정산 공제 체크기</a></li>
+        <li><a href="savings-calc.html">예금·적금 이자 계산기</a></li>
+        <li><a href="loan-calc.html">대출 이자 계산기</a></li>
+      </ul>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="logo" href="../index.html">
+          <span class="logo-mark" aria-hidden="true">다</span>
+          <span>다모아툴<span class="logo-sub">DamoaTool</span></span>
+        </a>
+        <p>이모지 복사부터 대출 이자 계산까지, 매일 쓰는 10가지 도구를 한곳에 모았습니다. 모든 계산과 변환은 이용자 브라우저 안에서만 처리되며 입력값은 서버로 전송되지 않습니다.</p>
+      </div>
+      <div class="footer-col">
+        <h2>텍스트·SNS</h2>
+        <ul>
+          <li><a href="emoji.html">이모지·특수기호 복사</a></li>
+          <li><a href="font-style.html">줄바꿈·폰트 변환</a></li>
+          <li><a href="char-count.html">글자수·바이트 계산</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>생활·시간</h2>
+        <ul>
+          <li><a href="roulette.html">랜덤 룰렛</a></li>
+          <li><a href="led-board.html">LED 전광판</a></li>
+          <li><a href="timer.html">집중 타이머</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>금융·세금</h2>
+        <ul>
+          <li><a href="loan-calc.html">대출 이자 계산</a></li>
+          <li><a href="savings-calc.html">예적금 이자 계산</a></li>
+          <li><a href="salary-calc.html">연봉 실수령액</a></li>
+          <li><a href="yearend-check.html">연말정산 체크</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 다모아툴(DamoaTool). 모든 도구는 무료입니다.</p>
+      <p><a href="../about.html">소개</a> · <a href="../terms.html">이용약관</a> · <a href="../privacy.html">개인정보처리방침</a> · 문의 rlatmdrhkd1@gmail.com</p>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/common.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* 2026년 근로소득 간이세액표(국세청, 2026.3.1. 지급분) 구간 요약
+     [월급여(천원), 세액(원)] 쌍 — 부양가족 1~6명. 두 지점 사이는 선형 보간합니다. */
+  var TAX_TABLE = {
+    "1": [1000,0,1060,1040,1250,3700,1970,18630,2460,34300,2580,38340,2590,38830,2990,73060,3000,74350,3220,93170,3240,95430,3740,156560,3760,163920,4480,260040,4560,271260,4580,276560,5820,450470,5840,470380,5860,475720,5880,478690,8320,1032080,9200,1237980,9220,1244640,9980,1503990],
+    "2": [1000,0,1340,1060,2190,18670,2500,28600,2790,38530,2990,55560,3000,56850,3420,92790,3440,94880,3740,131560,3760,136090,4480,231670,4560,242830,4580,248120,5820,421100,5840,441000,5860,446320,6080,477340,6100,481250,8320,982080,9420,1238140,9980,1428170],
+    "3": [1000,0,1720,1040,2490,16320,2600,18650,2990,31450,3000,31940,3200,38540,3320,48370,3740,81230,3760,84260,3860,92820,3880,94920,4480,168270,4560,178590,4580,183670,5820,343630,5840,372100,5860,377240,6620,477560,6640,481320,8320,836130,9980,1198650],
+    "4": [1000,0,1890,1040,2500,13150,2760,18660,3360,38500,3380,39950,3740,68110,3760,71130,4020,93380,4480,149520,4560,159840,4580,164920,5820,324880,5840,353350,5860,358490,6760,477290,6780,480880,8320,806130,9980,1168650],
+    "5": [1000,0,2060,1040,2490,9570,2920,18680,3320,31990,3520,38260,3540,39340,3740,54980,3760,58010,4160,92240,4180,94100,4480,130770,4560,141090,4580,146170,5820,306130,5840,334600,5860,339740,6900,477020,6920,480450,8320,776130,9980,1138650],
+    "6": [1000,0,2230,1040,2500,6400,2980,16570,3080,18830,3320,26740,3680,38010,3700,38730,3740,41860,3760,44880,4320,92810,4340,94910,4480,112020,4560,122340,4580,127420,5820,287380,5840,315850,5860,320990,7040,476750,7060,480020,8320,746130,9980,1108650]
+  };
+
+  var CHILD_CREDIT = { 0: 0, 1: 20830, 2: 45830, 3: 45830 + 33330 };
+
+  function lookupTax(monthlyTaxable, family) {
+    var key = String(Math.min(6, Math.max(1, family)));
+    var data = TAX_TABLE[key];
+    if (!data) return 0;
+    var m = monthlyTaxable / 1000; // 천원 단위
+    if (m <= data[0]) return 0;
+    for (var i = 2; i < data.length; i += 2) {
+      if (m <= data[i]) {
+        var x0 = data[i - 2], y0 = data[i - 1];
+        var x1 = data[i], y1 = data[i + 1];
+        return y0 + (y1 - y0) * (m - x0) / (x1 - x0);
+      }
+    }
+    var xa = data[data.length - 4], ya = data[data.length - 3];
+    var xb = data[data.length - 2], yb = data[data.length - 1];
+    return Math.max(0, yb + (yb - ya) * (m - xb) / (xb - xa));
+  }
+
+  var payEl = document.getElementById("pay");
+  var nontaxEl = document.getElementById("nontax");
+  var familyEl = document.getElementById("family");
+  var childrenEl = document.getElementById("children");
+  var payLabel = document.getElementById("payLabel");
+  var condLine = document.getElementById("condLine");
+  var deductBody = document.getElementById("deductBody");
+  var deductFoot = document.getElementById("deductFoot");
+
+  function parseAmount(str) {
+    var n = Number(String(str).replace(/[^0-9]/g, ""));
+    return isFinite(n) ? n : 0;
+  }
+  function fmt(n) { return Math.round(n).toLocaleString("ko-KR"); }
+  // 10원 미만 버림 (부동소수점 오차 보정)
+  function floor10(n) { return Math.floor(n / 10 + 1e-6) * 10; }
+  function max0(n) { return Math.max(0, n); }
+
+  function basis() {
+    return document.querySelector('input[name="basis"]:checked').value;
+  }
+
+  function update() {
+    var input = parseAmount(payEl.value);
+    var isYear = basis() === "year";
+    var annual = isYear ? input : input * 12;
+    var monthlyGross = Math.round(annual / 12);
+    var nontax = Math.min(parseAmount(nontaxEl.value), monthlyGross);
+    var taxable = max0(monthlyGross - nontax);
+    var family = parseInt(familyEl.value, 10) || 1;
+    var children = parseInt(childrenEl.value, 10) || 0;
+
+    payLabel.textContent = isYear ? "연봉" : "월급 (세전)";
+
+    if (annual <= 0) {
+      document.getElementById("netMonth").textContent = "-";
+      document.getElementById("grossMonth").textContent = "-";
+      document.getElementById("deductTotal").textContent = "-";
+      document.getElementById("netYear").textContent = "-";
+      document.getElementById("netSub").textContent = "금액을 입력하면 계산됩니다.";
+      document.getElementById("splitLine").textContent = "";
+      deductBody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--muted)">급여를 입력하면 표시됩니다.</td></tr>';
+      deductFoot.innerHTML = "";
+      return;
+    }
+
+    // 국민연금: 기준소득월액 1,000원 미만 버림, 41만~659만 원
+    var npBase = Math.min(Math.max(taxable, 410000), 6590000);
+    npBase = Math.floor(npBase / 1000) * 1000;
+    var np = floor10(npBase * 0.0475);
+    var hi = floor10(taxable * 0.03595);
+    var ltc = floor10(hi * 0.1314);
+    var ei = floor10(taxable * 0.009);
+
+    var incomeTax = floor10(max0(lookupTax(taxable, family) - CHILD_CREDIT[children]));
+    var localTax = floor10(incomeTax * 0.1);
+
+    var insurance = np + hi + ltc + ei;
+    var taxSum = incomeTax + localTax;
+    var total = insurance + taxSum;
+    var netMonth = monthlyGross - total;
+
+    document.getElementById("netMonth").textContent = fmt(netMonth) + "원";
+    document.getElementById("netSub").textContent = "월 세전 " + fmt(monthlyGross) + "원 − 공제 " + fmt(total) + "원";
+    document.getElementById("grossMonth").innerHTML = fmt(monthlyGross) + '<em>원</em>';
+    document.getElementById("deductTotal").innerHTML = fmt(total) + '<em>원</em>';
+    document.getElementById("netYear").innerHTML = fmt(netMonth * 12) + '<em>원</em>';
+    document.getElementById("splitLine").innerHTML =
+      "4대보험 <b>" + fmt(insurance) + "원</b> + 세금 <b>" + fmt(taxSum) + "원</b> · 공제율 <b>" +
+      (Math.round((total / monthlyGross) * 1000) / 10) + "%</b>";
+
+    condLine.textContent = (isYear ? "연봉 " : "월급 ") + fmt(isYear ? annual : monthlyGross) + "원 · 부양가족 " +
+      family + "명" + (children ? " · 자녀 " + children + "명" : "") + " · 비과세 " + fmt(nontax) + "원";
+
+    var rows = [
+      ["국민연금", "기준소득월액 " + fmt(npBase) + "원 × 4.75%", np],
+      ["건강보험", "과세 월급 " + fmt(taxable) + "원 × 3.595%", hi],
+      ["장기요양보험", "건강보험료 × 13.14%", ltc],
+      ["고용보험", "과세 월급 " + fmt(taxable) + "원 × 0.9%", ei],
+      ["소득세", "간이세액표 · 부양가족 " + family + "명" + (children ? " · 자녀 공제" : ""), incomeTax],
+      ["지방소득세", "소득세 × 10%", localTax]
+    ];
+    deductBody.innerHTML = "";
+    rows.forEach(function (r) {
+      var tr = document.createElement("tr");
+      tr.innerHTML = "<td>" + r[0] + "</td><td data-label='계산 기준'>" + r[1] + "</td><td data-label='월 공제액'>" + fmt(r[2]) + "원</td>";
+      deductBody.appendChild(tr);
+    });
+    deductFoot.innerHTML =
+      "<tr><td colspan='2'>공제 합계</td><td data-label='금액'>" + fmt(total) + "원</td></tr>" +
+      "<tr><td colspan='2'>실수령액</td><td data-label='금액'>" + fmt(netMonth) + "원</td></tr>";
+  }
+
+  function normalize(el) {
+    var pos = el.selectionStart;
+    var before = el.value.length;
+    var n = parseAmount(el.value);
+    el.value = el.value === "" ? "" : n.toLocaleString("ko-KR");
+    var after = el.value.length;
+    try { el.setSelectionRange(pos + (after - before), pos + (after - before)); } catch (e) {}
+  }
+
+  payEl.addEventListener("input", function () { normalize(payEl); update(); });
+  nontaxEl.addEventListener("input", function () { normalize(nontaxEl); update(); });
+  familyEl.addEventListener("change", update);
+  childrenEl.addEventListener("change", update);
+  var basisInputs = document.querySelectorAll('input[name="basis"]');
+  for (var i = 0; i < basisInputs.length; i++) {
+    basisInputs[i].addEventListener("change", function () {
+      var val = parseAmount(payEl.value);
+      if (val > 0) {
+        payEl.value = (this.value === "month" ? Math.round(val / 12) : val * 12).toLocaleString("ko-KR");
+      }
+      update();
+    });
+  }
+
+  document.getElementById("calcBtn").addEventListener("click", function () {
+    update();
+    DT.toast("실수령액을 계산했어요");
+  });
+
+  document.getElementById("paySet").addEventListener("click", function (e) {
+    var btn = e.target.closest("button[data-pay]");
+    if (!btn) return;
+    var amount = Number(btn.getAttribute("data-pay"));
+    payEl.value = (basis() === "year" ? amount : Math.round(amount / 12)).toLocaleString("ko-KR");
+    update();
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", function () {
+    document.getElementById("basisYear").checked = true;
+    payEl.value = (36000000).toLocaleString("ko-KR");
+    nontaxEl.value = (200000).toLocaleString("ko-KR");
+    familyEl.value = "1";
+    childrenEl.value = "0";
+    update();
+  });
+
+  update();
+})();
+</script>
+</body>
+</html>

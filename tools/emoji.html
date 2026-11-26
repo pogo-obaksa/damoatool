@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>이모지·특수기호 원클릭 복사 - 표정·손동작·화살표·별 총정리 | 다모아툴</title>
+<meta name="description" content="표정, 손동작, 화살표, 체크·별, 블로그 소제목 기호까지 260여 개의 이모지와 특수문자를 누르면 바로 복사. 설치·회원가입 없이 무료로 사용하세요.">
+<meta name="keywords" content="이모지 복사, 특수문자 복사, 이모티콘 모음, 화살표 특수문자, 체크 표시, 별 기호, 블로그 소제목 기호">
+<link rel="canonical" href="https://pogo-obaksa.github.io/damoatool/tools/emoji.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="이모지·특수기호 원클릭 복사 | 다모아툴">
+<meta property="og:description" content="250개 이상의 이모지와 특수문자를 누르면 바로 복사. 표정·손동작·화살표·체크·블로그 기호 모음.">
+<meta property="og:url" content="https://pogo-obaksa.github.io/damoatool/tools/emoji.html">
+<meta property="og:locale" content="ko_KR">
+<meta name="theme-color" content="#1d4ed8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231d4ed8'/%3E%3Ctext x='32' y='44' font-size='34' font-weight='700' text-anchor='middle' fill='white' font-family='sans-serif'%3E%EB%8B%A4%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&family=Noto+Color+Emoji&display=swap">
+<link rel="stylesheet" href="../css/style.css">
+<style>
+  .emoji-search { margin-bottom: 20px; }
+  .emoji-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .emoji-tabs .chip { min-height: 46px; padding: 0 16px; font-size: 16px; }
+  .emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(66px, 1fr));
+    gap: 8px;
+  }
+  .emoji-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-height: 68px;
+    padding: 6px 2px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    cursor: pointer;
+    font-family: "Pretendard", "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+    transition: border-color .12s ease, background .12s ease, transform .12s ease;
+  }
+  .emoji-btn:hover, .emoji-btn:focus-visible {
+    border-color: var(--blue);
+    background: var(--blue-soft);
+    transform: translateY(-1px);
+    outline: none;
+  }
+  .emoji-btn .ch { font-size: 27px; line-height: 1.15; }
+  .emoji-btn .nm {
+    font-size: 11px;
+    color: var(--muted);
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    letter-spacing: -0.02em;
+  }
+  .emoji-count { font-size: 15px; color: var(--muted); margin: 0 0 12px; }
+  .emoji-view-all { display: none; }
+  .emoji-view-all.show { display: block; }
+  .last-copied {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: #fff;
+    margin-bottom: 18px;
+  }
+  .last-copied .big { font-size: 34px; line-height: 1; }
+  .last-copied .txt { font-size: 15.5px; color: var(--muted); }
+  .last-copied .txt b { color: var(--ink); font-size: 16.5px; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="logo" href="../index.html">
+      <span class="logo-mark" aria-hidden="true">다</span>
+      <span>다모아툴<span class="logo-sub">생활이 편해지는 무료 웹툴</span></span>
+    </a>
+    <button class="nav-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mainNav"><span></span></button>
+    <nav class="main-nav" id="mainNav" aria-label="주요 메뉴">
+      <a href="../index.html">홈</a>
+      <a href="../index.html#tools">전체 도구</a>
+      <a href="../about.html">소개</a>
+      <a href="../privacy.html">개인정보</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="page-head">
+      <nav class="breadcrumb" aria-label="위치">
+        <a href="../index.html">홈</a><span class="sep">/</span><a href="../index.html#tools">텍스트·SNS</a><span class="sep">/</span><span>이모지·특수기호 복사</span>
+      </nav>
+      <h1>이모지·특수기호 원클릭 복사</h1>
+      <p class="lead">표정부터 화살표, 체크, 블로그 소제목 기호까지 <b>260여 개</b>를 모았습니다. 원하는 문자를 누르면 클립보드에 바로 복사됩니다.</p>
+    </div>
+
+    <div class="panel" style="margin-top:24px">
+      <div class="field emoji-search">
+        <label for="emojiSearch">이모지 검색</label>
+        <input type="search" id="emojiSearch" placeholder="예: 웃음, 하트, 화살표, 체크" autocomplete="off">
+        <span class="hint">이름의 일부만 적어도 찾아 드립니다. 검색어를 지우면 분류별 전체 목록으로 돌아갑니다.</span>
+      </div>
+
+      <div class="emoji-tabs" id="emojiTabs" role="group" aria-label="이모지 분류"></div>
+
+      <div class="last-copied" id="lastCopied" hidden>
+        <span class="big" id="lastChar">🙂</span>
+        <span class="txt"><b id="lastName">방금 복사한 문자</b><br>한 번 더 누르면 다시 복사할 수 있어요.</span>
+      </div>
+
+      <p class="emoji-count" id="emojiCount"></p>
+      <div class="emoji-grid" id="emojiGrid"></div>
+      <div class="empty-state" id="emojiEmpty" hidden>검색 결과가 없습니다. 다른 단어로 찾아보세요.</div>
+
+      <div class="btn-row">
+        <button class="btn btn-ghost" type="button" id="copyAllBtn">이 분류 전체 복사</button>
+        <button class="btn btn-ghost" type="button" id="clearSearchBtn">검색 초기화</button>
+      </div>
+      <p class="note">아이폰·갤럭시·PC에 따라 일부 이모지 모양이 다르게 보일 수 있습니다. 복사한 문자는 인스타그램, 스레드, 카카오톡, 블로그 어디에나 붙여 넣을 수 있어요.</p>
+    </div>
+
+    <section class="article">
+      <h2>이렇게 활용하세요</h2>
+      <p>이모지는 이제 문장을 꾸미는 장식이 아니라, 짧은 글에서 감정과 상황을 대신하는 표현입니다. 카카오톡 답장 한 줄에도, 인스타그램 캡션에도, 블로그 소제목 앞에도 이모지 하나를 붙이면 눈에 들어오는 속도가 달라집니다. 다모아툴의 이모지 복사기는 그런 순간에 필요한 문자를 찾느라 키보드 특수문자 창을 여닫지 않도록 만들었습니다. 검색창에 "하트", "체크", "화살표"처럼 우리말로 적으면 관련 문자가 바로 걸러집니다.</p>
+      <p>블로그를 운영한다면 <strong>소제목 기호</strong> 분류를 눈여겨보세요. ■, ▶, ◆ 같은 기호를 소제목 앞에 붙이면 글의 구조가 한눈에 들어오고, ①②③ 같은 원문자는 목록을 깔끔하게 정리할 때 유용합니다. 화살표는 글에서 다음 단계로 넘어가는 흐름을 표시할 때, 체크 표시는 준비물 목록이나 체크리스트를 만들 때 쓰면 좋습니다. 기호를 남발하면 오히려 산만해지므로 한 글에 두세 종류 정도로 제한하는 편이 읽기 편합니다.</p>
+      <p>복사한 문자는 운영체제와 앱에 따라 폭이 조금씩 다르게 보일 수 있습니다. 특히 이모지는 기기별로 그림체가 달라서, 중요한 안내문이라면 미리 휴대폰과 PC에서 모두 확인해 보시길 권합니다. 반대로 체크·화살표 같은 기본 기호는 대부분의 환경에서 같게 보입니다.</p>
+    </section>
+
+    <section class="article">
+      <h2>자주 묻는 질문</h2>
+      <div class="faq">
+        <details>
+          <summary>복사 버튼을 눌렀는데 아무 반응이 없어요.</summary>
+          <div class="answer"><p>화면 아래에 "복사했어요"라는 안내가 잠깐 나타납니다. 브라우저가 클립보드 접근을 막는 경우에는 자동으로 예비 방식으로 복사됩니다. 그래도 안 되면 문자를 길게 눌러 직접 선택한 뒤 복사해 주세요.</p></div>
+        </details>
+        <details>
+          <summary>여러 개를 한 번에 복사할 수 있나요?</summary>
+          <div class="answer"><p>"이 분류 전체 복사" 버튼을 누르면 현재 보고 있는 분류의 문자를 한 줄로 이어서 복사합니다. 필요한 문자만 골라 쓰려면 하나씩 누르는 편이 좋습니다.</p></div>
+        </details>
+        <details>
+          <summary>이모지가 네모로 보여요.</summary>
+          <div class="answer"><p>사용 중인 기기나 브라우저가 해당 이모지를 지원하지 않을 때 생기는 현상입니다. 운영체제를 최신으로 업데이트하거나, 다른 기기에서 확인해 보세요. 복사 자체는 정상적으로 됩니다.</p></div>
+        </details>
+        <details>
+          <summary>복사한 내용이 서버에 저장되나요?</summary>
+          <div class="answer"><p>아니요. 이 페이지는 복사한 문자나 검색어를 서버로 보내지 않습니다. 모든 동작은 브라우저 안에서만 이루어집니다.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <section class="related">
+      <h2>함께 쓰면 좋은 도구</h2>
+      <ul class="related-links">
+        <li><a href="font-style.html">줄바꿈·예쁜 폰트 변환기</a></li>
+        <li><a href="char-count.html">글자수·바이트 계산기</a></li>
+        <li><a href="led-board.html">모바일 LED 전광판</a></li>
+      </ul>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="logo" href="../index.html">
+          <span class="logo-mark" aria-hidden="true">다</span>
+          <span>다모아툴<span class="logo-sub">DamoaTool</span></span>
+        </a>
+        <p>이모지 복사부터 대출 이자 계산까지, 매일 쓰는 10가지 도구를 한곳에 모았습니다. 모든 계산과 변환은 이용자 브라우저 안에서만 처리되며 입력값은 서버로 전송되지 않습니다.</p>
+      </div>
+      <div class="footer-col">
+        <h2>텍스트·SNS</h2>
+        <ul>
+          <li><a href="emoji.html">이모지·특수기호 복사</a></li>
+          <li><a href="font-style.html">줄바꿈·폰트 변환</a></li>
+          <li><a href="char-count.html">글자수·바이트 계산</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>생활·시간</h2>
+        <ul>
+          <li><a href="roulette.html">랜덤 룰렛</a></li>
+          <li><a href="led-board.html">LED 전광판</a></li>
+          <li><a href="timer.html">집중 타이머</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>금융·세금</h2>
+        <ul>
+          <li><a href="loan-calc.html">대출 이자 계산</a></li>
+          <li><a href="savings-calc.html">예적금 이자 계산</a></li>
+          <li><a href="salary-calc.html">연봉 실수령액</a></li>
+          <li><a href="yearend-check.html">연말정산 체크</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 다모아툴(DamoaTool). 모든 도구는 무료입니다.</p>
+      <p><a href="../about.html">소개</a> · <a href="../terms.html">이용약관</a> · <a href="../privacy.html">개인정보처리방침</a> · 문의 rlatmdrhkd1@gmail.com</p>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/common.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var DATA = [
+    { cat: "인기", items: [
+      ["😀","웃는 얼굴"],["😊","미소"],["😂","눈물 웃음"],["🥰","하트 미소"],["😍","하트 눈"],["😎","선글라스"],
+      ["🤔","생각"],["😅","식은땀"],["😭","엉엉 울기"],["😡","화남"],["🥺","애처로운 눈"],["😴","잠"],
+      ["👍","좋아요 엄지"],["👏","박수"],["🙏","감사 기도"],["❤️","빨간 하트"],["🔥","불꽃"],["✨","반짝임"],
+      ["🎉","축하 파티"],["💯","백점"],["✅","체크"],["⭐","별"],["💡","아이디어 전구"],["📌","압정"],
+      ["📢","확성기"],["🎁","선물"],["☕","커피"],["🍀","네잎클로버"],["💪","알통"],["🙌","만세"]
+    ]},
+    { cat: "표정", items: [
+      ["😃","큰 웃음"],["😄","활짝 웃음"],["😁","이빨 웃음"],["😆","크게 웃음"],["🤣","데굴데굴"],["🙂","살짝 미소"],
+      ["🙃","거꾸로 얼굴"],["😉","윙크"],["😌","편안"],["😘","뽀뽀"],["😗","입 맞춤"],["😙","미소 뽀뽀"],
+      ["😚","눈 감고 뽀뽀"],["😋","맛있는"],["😛","메롱"],["😝","눈 감고 메롱"],["😜","윙크 메롱"],["🤪","엉뚱"],
+      ["🤨","눈썹 올림"],["🧐","돋보기"],["🤓","안경"],["🥳","파티"],["😏","능글"],["😒","시큰둥"],
+      ["😞","실망"],["😔","우울"],["😟","걱정"],["😕","혼란"],["🙁","찡그림"],["☹️","더 찡그림"],
+      ["😣","참는 표정"],["😖","괴로움"],["😫","지침"],["😩","힘듦"],["😤","씩씩"],["😠","화남"],
+      ["🤬","욕설"],["🤯","폭발"],["😳","얼굴 빨개짐"],["🥵","더움"],["🥶","추움"],["😱","공포"],
+      ["😨","무서움"],["😰","조마조마"],["😥","안도 울음"],["😓","식은땀2"],["🤗","포옹"],["🤭","입 가리기"],
+      ["🤫","쉿"],["🤥","거짓말"],["😶","무표정"],["😐","무덤덤"],["😑","덤덤"],["😬","으쓱"],
+      ["🙄","눈 굴리기"],["😯","놀람"],["😮","입 벌림"],["😲","깜짝"],["🥱","하품"],["🤤","침"],
+      ["😪","졸림"],["😵","어지러움"],["🤐","입 막음"],["🥴","취함"],["🤢","메스꺼움"],["🤮","토함"],
+      ["🤧","재채기"],["😷","마스크"],["🤒","열"],["🤕","붕대"],["🤑","돈 눈"],["🤠","카우보이"],
+      ["😈","장난 악마"],["👿","화난 악마"],["👻","유령"],["🤡","광대"],["💀","해골"]
+    ]},
+    { cat: "손동작", items: [
+      ["👍","엄지 위"],["👎","엄지 아래"],["👌","오케이"],["✌️","브이"],["🤞","행운"],["🤟","사랑해"],
+      ["🤘","록"],["🤙","전화"],["👈","왼쪽 손가락"],["👉","오른쪽 손가락"],["👆","위 손가락"],["👇","아래 손가락"],
+      ["☝️","하나"],["✋","손바닥"],["🤚","손등"],["🖐️","다섯 손가락"],["🖖","벌칸"],["👋","손 흔들기"],
+      ["🤝","악수"],["🙏","기도"],["💪","근육"],["👏","박수"],["🙌","두 손"],["👐","열린 손"],
+      ["🤲","모은 손"],["🫶","손 하트"],["✊","주먹"],["👊","주먹 인사"]
+    ]},
+    { cat: "화살표", items: [
+      ["→","오른쪽"],["←","왼쪽"],["↑","위"],["↓","아래"],["↔","좌우"],["↕","상하"],
+      ["⇒","오른쪽 두 줄"],["⇐","왼쪽 두 줄"],["⇑","위 두 줄"],["⇓","아래 두 줄"],["⇔","좌우 두 줄"],
+      ["➡️","오른쪽 화살표"],["⬅️","왼쪽 화살표"],["⬆️","위 화살표"],["⬇️","아래 화살표"],["↗️","오른쪽 위"],["↘️","오른쪽 아래"],
+      ["↙️","왼쪽 아래"],["↖️","왼쪽 위"],["⤴️","위로 꺾임"],["⤵️","아래로 꺾임"],["🔁","반복"],["🔃","시계 방향"],
+      ["➰","고리"],["➿","이중 고리"],["⏩","빨리 감기"],["⏪","되감기"],["▶️","재생"],["◀️","뒤로"],
+      ["↪️","오른쪽 꺾임"],["↩️","왼쪽 꺾임"],["⤳","물결 화살표"]
+    ]},
+    { cat: "체크·별", items: [
+      ["✅","초록 체크"],["✔️","체크 표시"],["☑️","체크 상자"],["❌","빨간 엑스"],["❎","엑스 상자"],["⭕","동그라미"],
+      ["❗","느낌표"],["❓","물음표"],["‼️","겹느낌표"],["⁉️","느낌물음표"],["⚠️","경고"],["⭐","별"],
+      ["🌟","반짝 별"],["✨","반짝이"],["💫","별똥별"],["⚡","번개"],["🔥","불"],["💧","물방울"],
+      ["💥","충돌"],["💯","백점"],["🔴","빨강 원"],["🟠","주황 원"],["🟡","노랑 원"],["🟢","초록 원"],
+      ["🔵","파랑 원"],["🟣","보라 원"],["⚫","검정 원"],["⚪","흰 원"],["🔶","주황 마름모"],["🔷","파랑 마름모"]
+    ]},
+    { cat: "블로그 소제목", items: [
+      ["■","검은 네모"],["□","빈 네모"],["▲","위 삼각"],["△","빈 위 삼각"],["▼","아래 삼각"],["▽","빈 아래 삼각"],
+      ["◆","마름모"],["◇","빈 마름모"],["○","동그라미"],["●","채운 동그라미"],["◎","이중 동그라미"],["★","채운 별"],
+      ["☆","빈 별"],["♠","스페이드"],["♣","클로버"],["♥","하트"],["♦","다이아"],["※","참고"],
+      ["§","절"],["¶","문단"],["†","단검"],["‡","이중 단검"],["°","도"],["㎜","밀리미터"],
+      ["㎝","센티미터"],["㎡","제곱미터"],["ℓ","리터"],["㎖","밀리리터"],["①","원문자 1"],["②","원문자 2"],
+      ["③","원문자 3"],["④","원문자 4"],["⑤","원문자 5"],["⑥","원문자 6"],["⑦","원문자 7"],["⑧","원문자 8"],
+      ["⑨","원문자 9"],["⑩","원문자 10"],["⑴","괄호 1"],["⑵","괄호 2"],["⑶","괄호 3"],["⑷","괄호 4"],
+      ["⑸","괄호 5"],["ⅰ","로마 i"],["ⅱ","로마 ii"],["ⅲ","로마 iii"],["ⅳ","로마 iv"],["ⅴ","로마 v"],
+      ["㉠","동그라미 가"],["㉡","동그라미 나"],["㉢","동그라미 다"],["㉣","동그라미 라"],["㉤","동그라미 마"],
+      ["「","여는 낫표"],["」","닫는 낫표"],["『","겹 낫표"],["』","겹 낫표 닫기"],["【","겹 괄호"],["】","겹 괄호 닫기"],
+      ["〈","홑꺾쇠"],["〉","홑꺾쇠 닫기"],["《","겹꺾쇠"],["》","겹꺾쇠 닫기"],["·","가운뎃점"],["•","불릿"],
+      ["…","말줄임"],["∼","물결"],["―","줄표"],["→","화살표"]
+    ]}
+  ];
+
+  var tabsEl = document.getElementById("emojiTabs");
+  var gridEl = document.getElementById("emojiGrid");
+  var countEl = document.getElementById("emojiCount");
+  var emptyEl = document.getElementById("emojiEmpty");
+  var searchEl = document.getElementById("emojiSearch");
+  var lastBox = document.getElementById("lastCopied");
+  var lastChar = document.getElementById("lastChar");
+  var lastName = document.getElementById("lastName");
+  var current = "인기";
+  var currentList = [];
+
+  function buildTabs() {
+    var total = 0;
+    DATA.forEach(function (group) { total += group.items.length; });
+    var html = '<button class="chip" type="button" data-cat="전체" aria-pressed="false">전체<span class="count">' + total + "</span></button>";
+    DATA.forEach(function (group) {
+      html += '<button class="chip" type="button" data-cat="' + group.cat + '" aria-pressed="' + (group.cat === current) + '">' + group.cat + '<span class="count">' + group.items.length + "</span></button>";
+    });
+    tabsEl.innerHTML = html;
+    tabsEl.addEventListener("click", function (e) {
+      var btn = e.target.closest("button[data-cat]");
+      if (!btn) return;
+      current = btn.getAttribute("data-cat");
+      searchEl.value = "";
+      var chips = tabsEl.querySelectorAll(".chip");
+      for (var i = 0; i < chips.length; i++) {
+        chips[i].setAttribute("aria-pressed", chips[i] === btn ? "true" : "false");
+      }
+      render();
+    });
+  }
+
+  function collect() {
+    var out = [];
+    DATA.forEach(function (group) {
+      if (current === "전체" || current === group.cat) {
+        group.items.forEach(function (pair) {
+          out.push({ ch: pair[0], name: pair[1], cat: group.cat });
+        });
+      }
+    });
+    return out;
+  }
+
+  function render() {
+    var q = searchEl.value.trim();
+    var pool = collect();
+    if (q) {
+      var lower = q.toLowerCase();
+      pool = pool.filter(function (item) {
+        return item.name.indexOf(q) !== -1 || item.ch === q || item.cat.indexOf(q) !== -1 || item.name.toLowerCase().indexOf(lower) !== -1;
+      });
+    }
+    currentList = pool;
+    gridEl.innerHTML = "";
+    var frag = document.createDocumentFragment();
+    pool.forEach(function (item) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "emoji-btn";
+      btn.setAttribute("aria-label", item.name + " 복사");
+      btn.title = item.name;
+      btn.dataset.ch = item.ch;
+      btn.innerHTML = '<span class="ch"></span><span class="nm"></span>';
+      btn.querySelector(".ch").textContent = item.ch;
+      btn.querySelector(".nm").textContent = item.name;
+      frag.appendChild(btn);
+    });
+    gridEl.appendChild(frag);
+    countEl.textContent = q
+      ? "검색 결과 " + pool.length + "개"
+      : (current === "전체" ? "전체 " : current + " ") + pool.length + "개";
+    emptyEl.hidden = pool.length !== 0;
+  }
+
+  gridEl.addEventListener("click", function (e) {
+    var btn = e.target.closest(".emoji-btn");
+    if (!btn) return;
+    var ch = btn.dataset.ch;
+    DT.copy(ch, ch + " 복사했어요");
+    lastBox.hidden = false;
+    lastChar.textContent = ch;
+    lastName.textContent = btn.getAttribute("aria-label").replace(" 복사", "");
+  });
+
+  searchEl.addEventListener("input", render);
+
+  document.getElementById("copyAllBtn").addEventListener("click", function () {
+    var text = currentList.map(function (i) { return i.ch; }).join(" ");
+    DT.copy(text, currentList.length + "개 문자를 복사했어요");
+  });
+
+  document.getElementById("clearSearchBtn").addEventListener("click", function () {
+    searchEl.value = "";
+    current = "전체";
+    var chips = tabsEl.querySelectorAll(".chip");
+    for (var i = 0; i < chips.length; i++) {
+      chips[i].setAttribute("aria-pressed", chips[i].getAttribute("data-cat") === "전체" ? "true" : "false");
+    }
+    render();
+    searchEl.focus();
+  });
+
+  buildTabs();
+  render();
+})();
+</script>
+</body>
+</html>
