@@ -455,22 +455,19 @@
     gradeLine.className = "rx-grade" + (avg >= 320 ? " warn" : "");
     gradeLine.innerHTML = "<b>" + g.pct + "</b> · 이번 판 최고 " + fmtMs(fastest) + "<br>" + g.text;
 
-    var isNew = !saved || avg < saved.avg;
-    if (isNew) {
+    var prevFast = saved && typeof saved.fastest === "number" ? saved.fastest : null;
+    var bestFast = prevFast == null ? fastest : Math.min(prevFast, fastest);
+    var isNewAvg = !saved || typeof saved.avg !== "number" || avg < saved.avg;
+    if (isNewAvg || bestFast !== prevFast) {
       var ok = saveBest({
-        fastest: saved && typeof saved.fastest === "number" ? Math.min(saved.fastest, fastest) : fastest,
-        avg: avg,
+        fastest: bestFast,
+        avg: isNewAvg ? avg : saved.avg,
         date: new Date().toISOString().slice(0, 10)
       });
       saved = loadBest();
       renderBestAll();
-      if (ok) DT.toast("새 최고 평균 기록이에요!");
-    } else if (saved && typeof saved.fastest === "number" && fastest < saved.fastest) {
-      saved.fastest = fastest;
-      saved.date = new Date().toISOString().slice(0, 10);
-      saveBest(saved);
-      renderBestAll();
-      DT.toast("가장 빠른 기록을 갱신했어요!");
+      if (ok && isNewAvg) DT.toast("새 최고 평균 기록이에요!");
+      else if (ok && bestFast !== prevFast) DT.toast("가장 빠른 기록을 갱신했어요!");
     }
   }
 
@@ -479,9 +476,12 @@
     renderTries();
     setStage("result", "기록", fmtMs(ms), "잠시 뒤 다음 신호가 나옵니다. 바로 준비하세요.");
 
-    if (saved && typeof saved.fastest === "number" && ms < saved.fastest) {
-      saved.fastest = ms;
-      saved.date = new Date().toISOString().slice(0, 10);
+    if (!saved || typeof saved.fastest !== "number" || ms < saved.fastest) {
+      saved = {
+        fastest: ms,
+        avg: saved && typeof saved.avg === "number" ? saved.avg : null,
+        date: new Date().toISOString().slice(0, 10)
+      };
       saveBest(saved);
       renderBestAll();
     }
