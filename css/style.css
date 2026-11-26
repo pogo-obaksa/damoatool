@@ -358,13 +358,42 @@ strong {
   font-size: 16px;
 }
 
+/* 카테고리 필터 — 어른들도 한눈에 누를 수 있게 크고 또렷하게 */
+.filter-bar {
+  margin: 0 0 28px;
+  padding: 16px 18px 18px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+
+.filter-label {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--ink-2);
+  letter-spacing: 0;
+}
+
+.filter-hint {
+  margin: 0 0 14px;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
 .filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
   margin: 0 0 26px;
   padding: 0;
   list-style: none;
+}
+
+.filter-bar .filters {
+  margin: 0;
 }
 
 .filters li {
@@ -372,34 +401,84 @@ strong {
 }
 
 .chip {
-  min-height: 48px;
-  padding: 0 20px;
-  border-radius: 999px;
-  border: 1px solid var(--line-strong);
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 56px;
+  padding: 0 22px;
+  border-radius: 16px;
+  border: 2px solid var(--line-strong);
   background: #fff;
-  color: var(--ink-2);
+  color: var(--ink);
   font-family: inherit;
-  font-size: 16.5px;
-  font-weight: 600;
+  font-size: 17.5px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease,
+    box-shadow 0.15s ease, transform 0.12s ease;
 }
 
 .chip:hover {
   border-color: var(--blue);
   color: var(--blue);
+  background: var(--blue-soft);
+  transform: translateY(-1px);
 }
 
 .chip[aria-pressed="true"] {
   background: var(--blue);
   border-color: var(--blue);
   color: #fff;
+  box-shadow: 0 8px 18px rgba(29, 78, 216, 0.26);
 }
 
 .chip .count {
-  font-size: 14px;
-  font-weight: 700;
-  opacity: 0.7;
-  margin-left: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 26px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: #eef2f7;
+  color: var(--ink-2);
+  font-size: 14.5px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.chip[aria-pressed="true"] .count {
+  background: rgba(255, 255, 255, 0.26);
+  color: #fff;
+}
+
+.chip .dot {
+  flex-shrink: 0;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--blue);
+}
+
+.chip[data-filter="text"] .dot {
+  background: #2563eb;
+}
+
+.chip[data-filter="life"] .dot {
+  background: var(--emerald);
+}
+
+.chip[data-filter="money"] .dot {
+  background: var(--amber);
+}
+
+.chip[data-filter="calc"] .dot {
+  background: #7c3aed;
+}
+
+.chip[aria-pressed="true"] .dot {
+  background: #fff;
 }
 
 .tool-grid {
@@ -444,6 +523,11 @@ strong {
 .tool-card.is-green .icon {
   background: var(--emerald-soft);
   color: var(--emerald);
+}
+
+.tool-card.is-violet .icon {
+  background: #f5f3ff;
+  color: #7c3aed;
 }
 
 .tool-card h3 {
@@ -491,6 +575,11 @@ strong {
 .tag.green {
   background: var(--emerald-soft);
   color: var(--emerald);
+}
+
+.tag.violet {
+  background: #f5f3ff;
+  color: #6d28d9;
 }
 
 /* ---------- 패널/폼 ---------- */
@@ -559,6 +648,14 @@ strong {
 .field .hint {
   display: block;
   margin-top: 7px;
+  font-size: 14.5px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.hint {
+  display: block;
+  margin: 10px 0 0;
   font-size: 14.5px;
   color: var(--muted);
   line-height: 1.6;
@@ -1164,8 +1261,8 @@ td strong {
 
 .footer-grid {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1fr;
-  gap: 34px;
+  grid-template-columns: 1.5fr repeat(4, 1fr);
+  gap: 30px;
 }
 
 .footer-brand .logo {
@@ -1361,6 +1458,152 @@ td strong {
   }
 }
 
+/* ---------- 이런 툴도 있어요 (모든 도구 페이지 공통) ---------- */
+.also-tools {
+  margin: 40px 0 12px;
+  padding: clamp(20px, 3vw, 32px);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+}
+
+.also-eyebrow {
+  margin: 0 0 6px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--blue);
+  letter-spacing: 0.04em;
+}
+
+.also-head h2 {
+  font-size: clamp(22px, 3vw, 27px);
+  font-weight: 800;
+}
+
+.also-head > p:last-child {
+  margin: 8px 0 0;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.also-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.also-card {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 18px 18px 16px;
+  background: #fbfcfe;
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  color: var(--ink);
+  text-decoration: none;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease,
+    background 0.16s ease;
+}
+
+.also-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--blue);
+  background: #fff;
+  box-shadow: var(--shadow-hover);
+  text-decoration: none;
+}
+
+.also-cat {
+  align-self: flex-start;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--blue-soft);
+  color: var(--blue);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.also-cat.cat-text {
+  background: var(--blue-soft);
+  color: var(--blue);
+}
+
+.also-cat.cat-life {
+  background: var(--emerald-soft);
+  color: var(--emerald);
+}
+
+.also-cat.cat-money {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+.also-cat.cat-calc {
+  background: #f5f3ff;
+  color: #6d28d9;
+}
+
+.also-card h3 {
+  font-size: 18.5px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.also-card p {
+  flex-grow: 1;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.also-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  align-self: flex-start;
+  min-height: 40px;
+  margin-top: 4px;
+  padding: 0 15px;
+  border-radius: 10px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 15.5px;
+  font-weight: 800;
+}
+
+.also-card:hover .also-btn {
+  background: var(--blue-dark);
+}
+
+@media (max-width: 1000px) {
+  .also-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .also-tools {
+    padding: 20px 16px;
+    border-radius: 18px;
+  }
+
+  .also-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .also-card {
+    padding: 16px;
+  }
+}
+
 /* ---------- 반응형 ---------- */
 @media (max-width: 1000px) {
   .tool-layout {
@@ -1460,8 +1703,21 @@ td strong {
   }
 
   .chip {
+    min-height: 52px;
     padding: 0 15px;
-    font-size: 15.5px;
+    font-size: 16.5px;
+    gap: 7px;
+  }
+
+  .chip .count {
+    min-width: 25px;
+    height: 23px;
+    font-size: 13.5px;
+  }
+
+  .filter-bar {
+    padding: 14px 14px 16px;
+    border-radius: 18px;
   }
 
   .btn {

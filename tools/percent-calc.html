@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>퍼센트 계산기 - 할인율·증감률 계산 | 다모아툴</title>
+<meta name="description" content="전체값의 몇 %, A에서 B로 몇 % 늘었는지, 정가에서 몇 % 할인하면 얼마인지. 세 가지만 넣으면 바로 나오는 무료 퍼센트·할인율 계산기입니다.">
+<meta name="keywords" content="퍼센트 계산기, 할인율 계산, 할인가 계산, 증감률 계산, 인상률 계산, 몇 퍼센트 계산, 프로모션 할인 계산">
+<link rel="canonical" href="https://pogo-obaksa.github.io/damoatool/tools/percent-calc.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="퍼센트·할인율 계산기 | 다모아툴">
+<meta property="og:description" content="전체값의 X%, 증감률, 할인 후 결제액을 입력하는 즉시 계산합니다.">
+<meta property="og:url" content="https://pogo-obaksa.github.io/damoatool/tools/percent-calc.html">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://pogo-obaksa.github.io/damoatool/assets/og-damoatool.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="다모아툴 - 매일 쓰는 무료 웹툴 15종">
+<meta property="og:site_name" content="다모아툴">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="퍼센트·할인율 계산기 | 다모아툴">
+<meta name="twitter:description" content="전체값의 X%, 증감률, 할인 후 결제액을 입력하는 즉시 계산합니다.">
+<meta name="twitter:image" content="https://pogo-obaksa.github.io/damoatool/assets/og-damoatool.jpg">
+<meta name="theme-color" content="#1d4ed8">
+<!-- Google AdSense -->
+<meta name="google-adsense-account" content="ca-pub-2879207392914466">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2879207392914466" crossorigin="anonymous"></script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231d4ed8'/%3E%3Ctext x='32' y='44' font-size='34' font-weight='700' text-anchor='middle' fill='white' font-family='sans-serif'%3E%EB%8B%A4%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="../css/style.css">
+<style>
+  .mode-panel[hidden] { display: none; }
+  .result-stack { display: grid; gap: 12px; margin-top: 18px; }
+  .result-stack .result { margin-top: 0; }
+  .mini-result { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .mini-result .stat .v { font-size: 20px; }
+  @media (max-width: 640px) { .mini-result { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="logo" href="../index.html">
+      <span class="logo-mark" aria-hidden="true">다</span>
+      <span>다모아툴<span class="logo-sub">생활이 편해지는 무료 웹툴</span></span>
+    </a>
+    <button class="nav-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mainNav"><span></span></button>
+    <nav class="main-nav" id="mainNav" aria-label="주요 메뉴">
+      <a href="../index.html">홈</a>
+      <a href="../index.html#tools">전체 도구</a>
+      <a href="../about.html">소개</a>
+      <a href="../privacy.html">개인정보</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="page-head">
+      <nav class="breadcrumb" aria-label="위치">
+        <a href="../index.html">홈</a><span class="sep">/</span><a href="../index.html#tools">계산·변환</a><span class="sep">/</span><span>퍼센트·할인율 계산기</span>
+      </nav>
+      <h1>퍼센트 · 할인율 계산기</h1>
+      <p class="lead">“3만 원짜리가 30% 할인이면 얼마지?” <b>숫자 두 개만 넣으면</b> 바로 나옵니다. 전체값의 몇 %, 얼마에서 얼마로 얼마나 늘었는지, 할인 후 결제액까지 한 화면에서 계산하세요.</p>
+    </div>
+
+    <div class="panel" style="margin-top:24px">
+      <div class="panel-head">
+        <div>
+          <h2>무엇을 계산할까요?</h2>
+          <p>모드를 고르고 값을 넣으면 결과가 바로 바뀝니다. 입력한 값은 서버로 전송되지 않습니다.</p>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="segmented three" role="radiogroup" aria-label="계산 모드">
+          <input type="radio" name="mode" id="modeA" value="a" checked>
+          <label for="modeA">① 전체값의 X%</label>
+          <input type="radio" name="mode" id="modeB" value="b">
+          <label for="modeB">② 몇 % 증감</label>
+          <input type="radio" name="mode" id="modeC" value="c">
+          <label for="modeC">③ 할인 가격</label>
+        </div>
+      </div>
+
+      <div class="mode-panel" id="panelA">
+        <div class="field-row">
+          <div class="field">
+            <label for="aTotal">전체값</label>
+            <div class="input-unit">
+              <input type="text" id="aTotal" inputmode="numeric" value="250,000" autocomplete="off">
+              <span class="unit">원</span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="aRate">퍼센트 (%)</label>
+            <div class="input-unit">
+              <input type="text" id="aRate" inputmode="decimal" value="30" autocomplete="off">
+              <span class="unit">%</span>
+            </div>
+          </div>
+        </div>
+        <div class="quick-set" id="aQuick">
+          <button type="button" data-rate="5">5%</button>
+          <button type="button" data-rate="10">10%</button>
+          <button type="button" data-rate="15">15%</button>
+          <button type="button" data-rate="20">20%</button>
+          <button type="button" data-rate="30">30%</button>
+          <button type="button" data-rate="50">50%</button>
+        </div>
+      </div>
+
+      <div class="mode-panel" id="panelB" hidden>
+        <div class="field-row">
+          <div class="field">
+            <label for="bFrom">이전 값 (A)</label>
+            <input type="text" id="bFrom" inputmode="numeric" value="1,000,000" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="bTo">이후 값 (B)</label>
+            <input type="text" id="bTo" inputmode="numeric" value="1,200,000" autocomplete="off">
+          </div>
+        </div>
+        <p class="hint">매출, 몸무게, 구독자 수처럼 “처음 값에서 지금 값”으로 비교하면 됩니다. 줄어든 경우에는 마이너스로 표시됩니다.</p>
+      </div>
+
+      <div class="mode-panel" id="panelC" hidden>
+        <div class="field-row">
+          <div class="field">
+            <label for="cPrice">원래 가격</label>
+            <div class="input-unit">
+              <input type="text" id="cPrice" inputmode="numeric" value="39,900" autocomplete="off">
+              <span class="unit">원</span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="cRate">할인율 (%)</label>
+            <div class="input-unit">
+              <input type="text" id="cRate" inputmode="decimal" value="20" autocomplete="off">
+              <span class="unit">%</span>
+            </div>
+          </div>
+        </div>
+        <div class="quick-set" id="cQuick">
+          <button type="button" data-rate="10">10%</button>
+          <button type="button" data-rate="20">20%</button>
+          <button type="button" data-rate="30">30%</button>
+          <button type="button" data-rate="50">50%</button>
+          <button type="button" data-rate="70">70%</button>
+        </div>
+      </div>
+
+      <div class="result-stack" aria-live="polite">
+        <div class="result" id="mainResult">
+          <span class="label" id="mainLabel">전체값의 30%</span>
+          <span class="value" id="mainValue">75,000<small>원</small></span>
+          <span class="sub" id="mainSub">250,000원의 30%는 75,000원입니다.</span>
+        </div>
+        <div class="mini-result">
+          <div class="stat"><span class="k" id="sub1k">1% 값</span><span class="v" id="sub1v">2,500<em>원</em></span></div>
+          <div class="stat"><span class="k" id="sub2k">나머지 (70%)</span><span class="v" id="sub2v">175,000<em>원</em></span></div>
+        </div>
+      </div>
+    </div>
+
+    <section class="article">
+      <h2>퍼센트 계산, 이 세 가지면 충분합니다</h2>
+      <p>살다 보면 퍼센트를 계산할 일이 생각보다 자주 생깁니다. 마트에서 “30% 할인” 스티커를 보고 실제로 얼마를 내는지 계산할 때, 연봉이 3,200만 원에서 3,500만 원으로 올랐을 때 몇 퍼센트 인상인지 궁금할 때, 카페 매출이 지난달보다 얼마나 늘었는지 정리할 때입니다. 문제는 머리로 계산하면 금방 헷갈린다는 점입니다. 특히 할인가는 “정가에서 빼는 계산”이라 순서를 헷갈리면 만 원씩 어긋나기 쉽습니다.</p>
+      <p>이 계산기는 그런 순간을 세 가지로 나눠 두었습니다. 첫째, <strong>전체값의 X%</strong>입니다. 250,000원의 30%처럼 “어떤 값의 일정 비율”을 구합니다. 둘째, <strong>A에서 B로 몇 % 증감</strong>입니다. 1,000,000원이 1,200,000원이 되었다면 20% 늘어난 것이고, 반대로 800,000원이 되었다면 20% 줄어든 것입니다. 셋째, <strong>원래 가격에서 X% 할인</strong>입니다. 할인액과 실제 결제액을 나눠 보여 주므로 카드 계산대 앞에서도 바로 확인할 수 있습니다.</p>
+      <p>모드를 바꾸면 입력창이 바뀌고, 숫자를 넣는 순간 결과가 다시 계산됩니다. 버튼을 누를 필요가 없어서, 10%·20%·30%를 오가며 “이 정도면 살 만한가”를 비교하기 좋습니다. 자주 쓰는 비율은 버튼으로 한 번에 넣을 수 있게 해 두었습니다.</p>
+
+      <h2>계산 기준과 공식</h2>
+      <div class="formula">
+        <b>① 전체값의 X%</b> — 전체값 × (X ÷ 100)<br>
+        <b>② 증감률</b> — (이후 값 − 이전 값) ÷ 이전 값 × 100<br>
+        <b>③ 할인가</b> — 할인액 = 원래 가격 × (할인율 ÷ 100), 결제액 = 원래 가격 − 할인액
+      </div>
+      <p>증감률은 <strong>이전 값을 기준</strong>으로 나눕니다. 같은 20만 원이 늘어도 기준이 100만 원이면 20%, 400만 원이면 5%입니다. 그래서 “얼마 늘었나”와 “몇 % 늘었나”는 다른 이야기이고, 비교할 때는 기준이 되는 값을 꼭 함께 봐야 합니다. 증감률 계산에서 이전 값이 0이면 나눗셈이 성립하지 않으므로 계산할 수 없다는 안내가 나옵니다.</p>
+      <p>할인 계산에서는 할인율을 100%까지 넣을 수 있습니다. 100%면 결제액이 0원이 되고, 100%를 넘기면 계산은 되지만 실제 매장에서는 있을 수 없는 값이므로 결과 아래에 안내가 표시됩니다. 쿠폰 할인과 카드 할인이 겹칠 때는 보통 정가에서 차례로 빼는 방식(중복 할인)과 할인율을 더하는 방식이 결과가 다르므로, 매장 안내를 먼저 확인하는 편이 정확합니다.</p>
+
+      <h2>실생활에서 이렇게 씁니다</h2>
+      <ul>
+        <li><strong>세일 가격 확인</strong> — 39,900원 20% 할인이면 할인액 7,980원, 결제액 31,920원입니다. 30%라면 27,930원입니다.</li>
+        <li><strong>연봉 인상률</strong> — 3,200만 원에서 3,500만 원으로 오르면 9.38% 인상입니다. 협상할 때 숫자로 말하기 좋습니다.</li>
+        <li><strong>부가세 떼어 보기</strong> — 부가세 포함 금액의 공급가는 “금액 ÷ 1.1”, 부가세는 “금액 − 공급가”로 구합니다. 전체값의 10%를 단순히 빼면 부가세보다 조금 크게 나옵니다.</li>
+        <li><strong>매출·구독자 증감</strong> — 지난달 1,000명에서 이번 달 1,240명이면 24% 늘어난 것입니다.</li>
+        <li><strong>적립·포인트</strong> — 5% 적립은 결제액의 5%를 포인트로 돌려받는 것으로, 할인과는 다릅니다.</li>
+      </ul>
+
+      <h2>주의할 점</h2>
+      <p>퍼센트는 “무엇을 100으로 보느냐”에 따라 값이 달라집니다. 10% 인상한 뒤 다시 10% 인하하면 원래 가격으로 돌아오지 않습니다(100 → 110 → 99). 할인율이 같아 보여도 적용 순서와 기준 금액이 다르면 결과가 달라지므로, 영수증에서는 할인 전 금액과 할인 후 금액을 함께 확인하세요. 소수점 아래 금액은 계산 결과를 그대로 보여 주며, 실제 결제에서는 매장의 반올림·절사 기준에 따라 10원 단위로 달라질 수 있습니다.</p>
+      <p class="note">기준일: 2026년 11월 26일. 이 계산기는 사칙연산으로 계산한 참고용 결과이며, 실제 결제 금액은 판매처의 할인 적용 방식과 반올림 기준에 따라 달라질 수 있습니다.</p>
+    </section>
+
+    <section class="article">
+      <h2>자주 묻는 질문</h2>
+      <div class="faq">
+        <details>
+          <summary>할인율과 할인액은 어떻게 다른가요?</summary>
+          <div class="answer"><p>할인율은 “몇 %를 깎아 주는지”, 할인액은 “실제로 얼마가 깎이는지”입니다. 39,900원에 20% 할인이면 할인액은 7,980원이고, 결제액은 31,920원입니다.</p></div>
+        </details>
+        <details>
+          <summary>증감률이 마이너스로 나옵니다.</summary>
+          <div class="answer"><p>이후 값이 이전 값보다 작으면 줄어든 것이므로 마이너스로 표시됩니다. −15%는 “15% 감소”와 같은 뜻입니다.</p></div>
+        </details>
+        <details>
+          <summary>부가세 포함 금액에서 부가세만 빼려면요?</summary>
+          <div class="answer"><p>부가세 포함 금액을 1.1로 나누면 공급가가 나오고, 원래 금액에서 공급가를 빼면 부가세입니다. 전체값의 10%를 빼는 방식은 부가세보다 조금 큰 값이 나오므로 권하지 않습니다.</p></div>
+        </details>
+        <details>
+          <summary>쿠폰 10%와 카드 10%가 겹치면 20%인가요?</summary>
+          <div class="answer"><p>보통은 차례로 적용해 19% 정도가 됩니다. 10,000원에서 10%를 빼면 9,000원, 여기서 다시 10%를 빼면 8,100원이기 때문입니다. 할인율을 더하는 방식은 매장 정책에 따라 다릅니다.</p></div>
+        </details>
+        <details>
+          <summary>입력한 금액이 저장되나요?</summary>
+          <div class="answer"><p>아니요. 모든 계산은 브라우저 안에서만 이루어지고 페이지를 새로 고치면 사라집니다. 서버로 보내지 않습니다.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <section class="also-tools" aria-labelledby="alsoTitle">
+      <div class="also-head">
+        <p class="also-eyebrow">다른 도구 둘러보기</p>
+        <h2 id="alsoTitle">이런 툴도 있어요</h2>
+        <p>계산하다가 옆으로 이어지는 것들입니다. 눌러서 바로 열어 보세요.</p>
+      </div>
+      <div class="also-grid">
+        <a class="also-card" href="unit-conv.html">
+          <span class="also-cat cat-calc">계산·변환</span>
+          <h3>평수 ↔ ㎡ 변환기</h3>
+          <p>“34평이 몇 ㎡인지” 부동산 보다가 바로 확인.</p>
+          <span class="also-btn">바로 열기 →</span>
+        </a>
+        <a class="also-card" href="date-calc.html">
+          <span class="also-cat cat-life">생활·시간</span>
+          <h3>날짜·D-Day 계산기</h3>
+          <p>사귄 지 100일·1000일이 언제인지 궁금할 때.</p>
+          <span class="also-btn">바로 열기 →</span>
+        </a>
+        <a class="also-card" href="loan-calc.html">
+          <span class="also-cat cat-money">금융·세금</span>
+          <h3>대출 이자 계산기</h3>
+          <p>같은 금리도 상환 방식에 따라 총이자가 달라요.</p>
+          <span class="also-btn">바로 열기 →</span>
+        </a>
+        <a class="also-card" href="savings-calc.html">
+          <span class="also-cat cat-money">금융·세금</span>
+          <h3>예적금 이자 계산기</h3>
+          <p>세금 떼고 실제로 받는 이자를 계산해요.</p>
+          <span class="also-btn">바로 열기 →</span>
+        </a>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="logo" href="../index.html">
+          <span class="logo-mark" aria-hidden="true">다</span>
+          <span>다모아툴<span class="logo-sub">DamoaTool</span></span>
+        </a>
+        <p>이모지 복사부터 QR코드·로또 번호 생성까지, 매일 쓰는 15가지 도구를 한곳에 모았습니다. 모든 계산과 변환은 이용자 브라우저 안에서만 처리되며 입력값은 서버로 전송되지 않습니다.</p>
+      </div>
+      <div class="footer-col">
+        <h2>텍스트·SNS</h2>
+        <ul>
+          <li><a href="emoji.html">이모지·특수기호 복사</a></li>
+          <li><a href="font-style.html">줄바꿈·폰트 변환</a></li>
+          <li><a href="char-count.html">글자수·바이트 계산</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>생활·시간</h2>
+        <ul>
+          <li><a href="roulette.html">랜덤 룰렛</a></li>
+          <li><a href="led-board.html">LED 전광판</a></li>
+          <li><a href="timer.html">집중 타이머</a></li>
+          <li><a href="date-calc.html">날짜·D-Day 계산</a></li>
+          <li><a href="qr-gen.html">QR코드 생성</a></li>
+          <li><a href="lotto.html">로또 번호 생성</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>금융·세금</h2>
+        <ul>
+          <li><a href="loan-calc.html">대출 이자 계산</a></li>
+          <li><a href="savings-calc.html">예적금 이자 계산</a></li>
+          <li><a href="salary-calc.html">연봉 실수령액</a></li>
+          <li><a href="yearend-check.html">연말정산 체크</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>계산·변환</h2>
+        <ul>
+          <li><a href="percent-calc.html">퍼센트·할인율</a></li>
+          <li><a href="unit-conv.html">평수·단위 변환</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 다모아툴(DamoaTool). 모든 도구는 무료입니다.</p>
+      <p><a href="../about.html">소개</a> · <a href="../terms.html">이용약관</a> · <a href="../privacy.html">개인정보처리방침</a> · 문의 rlatmdrhkd1@gmail.com</p>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/common.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  function num(v) {
+    var n = Number(String(v).replace(/[^0-9.-]/g, ""));
+    return isFinite(n) ? n : 0;
+  }
+  function fmt(n, digits) {
+    var d = digits == null ? 0 : digits;
+    var rounded = Math.round(n * Math.pow(10, d)) / Math.pow(10, d);
+    return rounded.toLocaleString("ko-KR", { maximumFractionDigits: d });
+  }
+  function el(id) { return document.getElementById(id); }
+
+  var mainLabel = el("mainLabel"), mainValue = el("mainValue"), mainSub = el("mainSub");
+  var sub1k = el("sub1k"), sub1v = el("sub1v"), sub2k = el("sub2k"), sub2v = el("sub2v");
+
+  function currentMode() {
+    var checked = document.querySelector('input[name="mode"]:checked');
+    return checked ? checked.value : "a";
+  }
+
+  function showPanel(mode) {
+    el("panelA").hidden = mode !== "a";
+    el("panelB").hidden = mode !== "b";
+    el("panelC").hidden = mode !== "c";
+  }
+
+  function update() {
+    var mode = currentMode();
+    showPanel(mode);
+
+    if (mode === "a") {
+      var total = num(el("aTotal").value);
+      var rate = num(el("aRate").value);
+      var part = total * rate / 100;
+      mainLabel.textContent = "전체값의 " + fmt(rate, 2) + "%";
+      mainValue.innerHTML = fmt(part, 2) + "<small>원</small>";
+      mainSub.textContent = fmt(total) + "원의 " + fmt(rate, 2) + "%는 " + fmt(part, 2) + "원입니다.";
+      sub1k.textContent = "1% 값";
+      sub1v.innerHTML = fmt(total / 100, 2) + "<em>원</em>";
+      sub2k.textContent = "남는 금액 (" + fmt(100 - rate, 2) + "%)";
+      sub2v.innerHTML = fmt(total - part, 2) + "<em>원</em>";
+    } else if (mode === "b") {
+      var from = num(el("bFrom").value);
+      var to = num(el("bTo").value);
+      var diff = to - from;
+      if (from === 0) {
+        mainLabel.textContent = "증감률";
+        mainValue.innerHTML = "—<small></small>";
+        mainSub.textContent = "이전 값이 0이면 증감률을 계산할 수 없습니다. 0이 아닌 값을 넣어 주세요.";
+        sub1k.textContent = "증감액";
+        sub1v.innerHTML = fmt(diff) + "<em>원</em>";
+        sub2k.textContent = "이후 값";
+        sub2v.innerHTML = fmt(to) + "<em>원</em>";
+      } else {
+        var pct = diff / from * 100;
+        mainLabel.textContent = pct >= 0 ? "증가율" : "감소율";
+        mainValue.innerHTML = (pct >= 0 ? "+" : "") + fmt(pct, 2) + "<small>%</small>";
+        mainSub.textContent = fmt(from) + "원 → " + fmt(to) + "원, " + (diff >= 0 ? "증가" : "감소") + "액 " + fmt(Math.abs(diff)) + "원입니다.";
+        sub1k.textContent = "증감액";
+        sub1v.innerHTML = (diff > 0 ? "+" : "") + fmt(diff) + "<em>원</em>";
+        sub2k.textContent = "이후 값 기준 비율";
+        sub2v.innerHTML = fmt(from === 0 ? 0 : to / from * 100, 1) + "<em>%</em>";
+      }
+    } else {
+      var price = num(el("cPrice").value);
+      var crate = num(el("cRate").value);
+      var discount = price * crate / 100;
+      var pay = price - discount;
+      mainLabel.textContent = "할인 후 결제액";
+      mainValue.innerHTML = fmt(pay, 2) + "<small>원</small>";
+      if (crate > 100) {
+        mainSub.textContent = "할인율이 100%를 넘었습니다. 실제 매장에서는 적용되지 않는 값이니 할인율을 확인해 주세요.";
+      } else {
+        mainSub.textContent = fmt(price) + "원에서 " + fmt(discount, 2) + "원 할인, " + fmt(pay, 2) + "원을 냅니다.";
+      }
+      sub1k.textContent = "할인액";
+      sub1v.innerHTML = fmt(discount, 2) + "<em>원</em>";
+      sub2k.textContent = "원래 가격";
+      sub2v.innerHTML = fmt(price) + "<em>원</em>";
+    }
+  }
+
+  var inputs = document.querySelectorAll('input[type="text"]');
+  for (var i = 0; i < inputs.length; i++) {
+    inputs[i].addEventListener("input", update);
+  }
+  var modes = document.querySelectorAll('input[name="mode"]');
+  for (var j = 0; j < modes.length; j++) {
+    modes[j].addEventListener("change", update);
+  }
+  function bindQuick(id, targetId) {
+    var box = el(id);
+    if (!box) return;
+    box.addEventListener("click", function (e) {
+      var btn = e.target.closest("button[data-rate]");
+      if (!btn) return;
+      el(targetId).value = btn.getAttribute("data-rate");
+      update();
+    });
+  }
+  bindQuick("aQuick", "aRate");
+  bindQuick("cQuick", "cRate");
+
+  update();
+})();
+</script>
+</body>
+</html>

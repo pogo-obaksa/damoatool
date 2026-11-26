@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QR코드 생성기 - 와이파이·링크·텍스트 QR 만들기 | 다모아툴</title>
+<meta name="description" content="홈페이지 주소, 안내 문구, 우리 집 와이파이 정보를 넣으면 바로 QR코드가 만들어집니다. 크기와 색상을 고르고 PNG 이미지로 저장하세요. 회원가입 없는 무료 QR 생성기.">
+<meta name="keywords" content="QR코드 생성기, QR코드 만들기, 와이파이 QR, WIFI QR, 링크 QR코드, QR PNG 저장, 무료 QR 생성">
+<link rel="canonical" href="https://pogo-obaksa.github.io/damoatool/tools/qr-gen.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="QR코드 생성기 | 다모아툴">
+<meta property="og:description" content="링크·텍스트·와이파이 정보를 넣으면 바로 QR코드가 만들어집니다. PNG로 저장하세요.">
+<meta property="og:url" content="https://pogo-obaksa.github.io/damoatool/tools/qr-gen.html">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://pogo-obaksa.github.io/damoatool/assets/og-damoatool.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="다모아툴 - 매일 쓰는 무료 웹툴 15종">
+<meta property="og:site_name" content="다모아툴">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="QR코드 생성기 | 다모아툴">
+<meta name="twitter:description" content="링크·텍스트·와이파이 정보를 넣으면 바로 QR코드가 만들어집니다. PNG로 저장하세요.">
+<meta name="twitter:image" content="https://pogo-obaksa.github.io/damoatool/assets/og-damoatool.jpg">
+<meta name="theme-color" content="#1d4ed8">
+<!-- Google AdSense -->
+<meta name="google-adsense-account" content="ca-pub-2879207392914466">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2879207392914466" crossorigin="anonymous"></script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231d4ed8'/%3E%3Ctext x='32' y='44' font-size='34' font-weight='700' text-anchor='middle' fill='white' font-family='sans-serif'%3E%EB%8B%A4%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="../css/style.css">
+<style>
+  .mode-panel[hidden] { display: none; }
+  .qr-layout { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: 26px; align-items: start; }
+  .qr-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 22px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: linear-gradient(180deg, #f5f9ff, #eff4ff);
+  }
+  #qrCanvas { display: block; width: 100%; max-width: 320px; height: auto; border-radius: 10px; background: #fff; image-rendering: pixelated; }
+  .qr-meta { margin: 0; font-size: 14.5px; color: var(--muted); text-align: center; line-height: 1.6; }
+  .qr-error { margin: 0; font-size: 15px; font-weight: 700; color: #b91c1c; text-align: center; }
+  .color-field { display: flex; flex-wrap: wrap; gap: 12px; }
+  .color-field .color-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15.5px;
+    font-weight: 700;
+    color: var(--ink-2);
+  }
+  .color-field input[type="color"] { width: 62px; min-height: 52px; padding: 4px; }
+  .check-line { display: flex; align-items: center; gap: 10px; font-size: 16.5px; font-weight: 600; color: var(--ink-2); }
+  .check-line input { width: 22px; height: 22px; accent-color: var(--blue); }
+  @media (max-width: 900px) { .qr-layout { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="logo" href="../index.html">
+      <span class="logo-mark" aria-hidden="true">다</span>
+      <span>다모아툴<span class="logo-sub">생활이 편해지는 무료 웹툴</span></span>
+    </a>
+    <button class="nav-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mainNav"><span></span></button>
+    <nav class="main-nav" id="mainNav" aria-label="주요 메뉴">
+      <a href="../index.html">홈</a>
+      <a href="../index.html#tools">전체 도구</a>
+      <a href="../about.html">소개</a>
+      <a href="../privacy.html">개인정보</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="page-head">
+      <nav class="breadcrumb" aria-label="위치">
+        <a href="../index.html">홈</a><span class="sep">/</span><a href="../index.html#tools">생활·시간</a><span class="sep">/</span><span>QR코드 생성기</span>
+      </nav>
+      <h1>QR코드 생성기</h1>
+      <p class="lead">가게 홈페이지, 안내 문구, 우리 집 와이파이까지. <b>내용을 넣으면 그 자리에서</b> QR코드가 만들어지고, PNG 이미지로 저장할 수 있습니다.</p>
+    </div>
+
+    <div class="panel" style="margin-top:24px">
+      <div class="panel-head">
+        <div>
+          <h2>QR코드 만들기</h2>
+          <p>입력한 내용은 서버로 전송되지 않고 브라우저에서만 QR코드로 바뀝니다.</p>
+        </div>
+      </div>
+
+      <div class="qr-layout">
+        <div>
+          <div class="field">
+            <div class="segmented" role="radiogroup" aria-label="QR 종류">
+              <input type="radio" name="qmode" id="qmodeText" value="text" checked>
+              <label for="qmodeText">링크·텍스트</label>
+              <input type="radio" name="qmode" id="qmodeWifi" value="wifi">
+              <label for="qmodeWifi">와이파이</label>
+            </div>
+          </div>
+
+          <div class="mode-panel" id="panelText">
+            <div class="field">
+              <label for="qrText">내용 (주소 또는 문구)</label>
+              <textarea id="qrText" style="min-height:110px" placeholder="https://example.com 또는 안내 문구">https://pogo-obaksa.github.io/damoatool/</textarea>
+              <span class="hint">주소를 넣으면 휴대폰 카메라로 찍었을 때 바로 열리는 QR코드가 됩니다.</span>
+            </div>
+          </div>
+
+          <div class="mode-panel" id="panelWifi" hidden>
+            <div class="field">
+              <label for="wifiSsid">와이파이 이름 (SSID)</label>
+              <input type="text" id="wifiSsid" value="MyHome_WiFi" autocomplete="off">
+            </div>
+            <div class="field">
+              <label for="wifiPass">비밀번호</label>
+              <input type="text" id="wifiPass" value="12345678" autocomplete="off">
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="wifiSec">보안 방식</label>
+                <select id="wifiSec">
+                  <option value="WPA" selected>WPA / WPA2 / WPA3</option>
+                  <option value="WEP">WEP (오래된 공유기)</option>
+                  <option value="nopass">비밀번호 없음</option>
+                </select>
+              </div>
+              <div class="field">
+                <label style="opacity:0" aria-hidden="true">숨김</label>
+                <label class="check-line" for="wifiHidden" style="min-height:52px">
+                  <input type="checkbox" id="wifiHidden"> 숨긴 네트워크
+                </label>
+              </div>
+            </div>
+            <p class="note" style="margin-top:0">와이파이 QR은 안드로이드·아이폰 카메라로 찍으면 바로 연결 화면이 뜹니다. 비밀번호가 담기므로 손님이 많은 곳에서는 게스트용 네트워크를 따로 만들어 쓰세요.</p>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="qrSize">이미지 크기</label>
+              <select id="qrSize">
+                <option value="200">200 × 200 px (작게)</option>
+                <option value="300" selected>300 × 300 px (보통)</option>
+                <option value="500">500 × 500 px (크게)</option>
+                <option value="800">800 × 800 px (인쇄용)</option>
+              </select>
+            </div>
+            <div class="field">
+              <span class="field-label">색상</span>
+              <div class="color-field">
+                <label class="color-item" for="qrFg"><input type="color" id="qrFg" value="#111827"> QR</label>
+                <label class="color-item" for="qrBg"><input type="color" id="qrBg" value="#ffffff"> 바탕</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-primary" type="button" id="downloadBtn">PNG 이미지로 저장</button>
+            <button class="btn btn-ghost" type="button" id="resetBtn">처음으로</button>
+          </div>
+        </div>
+
+        <div class="qr-stage">
+          <canvas id="qrCanvas" width="300" height="300" role="img" aria-label="생성된 QR코드"></canvas>
+          <p class="qr-meta" id="qrMeta">입력하는 대로 QR코드가 다시 만들어집니다.</p>
+          <p class="qr-error" id="qrError" hidden></p>
+        </div>
+      </div>
+    </div>
+
+    <section class="article">
+      <h2>QR코드, 어디에 쓰면 좋을까요</h2>
+      <p>QR코드는 카메라를 대면 곧바로 내용을 읽어 주는 사각형 무늬입니다. 예전에는 명함이나 전단지에 쓰는 정도였는데, 요즘은 식당 테이블의 메뉴판, 매장의 리뷰 이벤트 안내, 아파트 게시판의 공지, 결혼식 축의금 계좌 안내까지 거의 모든 종이 안내문이 QR코드를 함께 씁니다. 링크를 길게 적어 두는 대신 QR코드 한 장이면 휴대폰으로 바로 열 수 있기 때문입니다.</p>
+      <p>이 생성기는 크게 두 가지를 만듭니다. 첫째는 <strong>링크·텍스트형</strong>입니다. 홈페이지 주소, 블로그 주소, 전화번호, 안내 문구를 넣으면 됩니다. 주소는 짧을수록 QR 무늬가 단순해져서 작게 인쇄해도 잘 읽힙니다. 둘째는 <strong>와이파이형</strong>입니다. 네트워크 이름(SSID)과 비밀번호를 넣으면, 손님이 QR을 찍는 순간 비밀번호를 입력하지 않아도 연결 화면이 뜹니다. 가게나 사무실, 집들이 온 손님에게 일일이 비밀번호를 알려 주지 않아도 됩니다.</p>
+      <p>만든 QR코드는 PNG 이미지로 저장됩니다. 저장한 파일은 파워포인트·한글·포토샵 등 어떤 프로그램에도 붙일 수 있고, 인쇄물에 넣을 때는 800px 크기를 권합니다. 화면에 보이는 QR은 미리보기이고, 저장 버튼을 누르면 선택한 크기대로 다시 그려서 저장합니다.</p>
+
+      <h2>잘 읽히는 QR코드를 만드는 기준</h2>
+      <div class="formula">
+        <b>여백</b> — QR 주변에 최소 4칸(모듈)의 흰 여백을 둡니다. 이 생성기는 여백을 자동으로 넣습니다.<br>
+        <b>대비</b> — 어두운 색 QR + 밝은 바탕이 원칙입니다. 바탕이 어두우면 인식률이 떨어집니다.<br>
+        <b>크기</b> — 명함·전단은 2cm 이상, 테이블 스탠드는 5cm 이상, 벽면 게시물은 10cm 이상을 권합니다.<br>
+        <b>내용 길이</b> — 주소가 길수록 QR이 촘촘해집니다. 가능하면 짧은 주소를 쓰세요.
+      </div>
+      <p>QR코드는 오류 정정 기능이 있어 일부가 가려져도 읽힙니다. 이 생성기는 표준 권장 수준(오류 정정 M, 약 15%)으로 만들어, 손가락 자국이나 약간의 인쇄 번짐이 있어도 인식됩니다. 다만 가운데에 로고를 크게 얹거나 색을 여러 가지로 넣으면 인식률이 떨어질 수 있으니, 처음에는 기본 색으로 만들어 테스트해 보세요.</p>
+      <p>인쇄한 뒤에는 꼭 한 번 휴대폰 카메라로 찍어 확인하세요. 화면에서는 잘 되던 QR도 인쇄가 흐리거나 크기가 작으면 읽히지 않습니다. 특히 어두운 색 QR을 어두운 종이에 인쇄하면 대비가 사라져 인식되지 않습니다.</p>
+      <p>여러 개를 만들 때는 내용만 바꿔 차례로 저장하면 됩니다. 예를 들어 테이블마다 다른 메뉴 링크를 넣거나, 지점마다 다른 안내 주소를 넣을 수 있습니다. 다만 같은 QR을 여러 곳에 붙일 때는 파일 이름을 구분해 두지 않으면 헷갈리기 쉬우므로, 저장 뒤에 이름을 바꿔 두는 습관이 좋습니다. 만든 QR은 서버에 보관되지 않으므로, 나중에 같은 QR이 필요하면 내용을 다시 입력해 만들면 됩니다.</p>
+
+      <h2>주의할 점</h2>
+      <ul>
+        <li>와이파이 QR에는 비밀번호가 담깁니다. 사진을 공개된 곳에 올리지 마세요.</li>
+        <li>QR코드는 만료되지 않습니다. 내용을 바꾸려면 새로 만들어 다시 인쇄해야 합니다.</li>
+        <li>비밀번호가 바뀌면 기존 QR로는 연결되지 않습니다.</li>
+        <li>모르는 QR코드는 함부로 찍지 마세요. 피싱 사이트로 연결될 수 있습니다.</li>
+      </ul>
+      <p class="note">기준일: 2026년 11월 26일. QR코드는 ISO/IEC 18004 표준(바이트 모드, 오류 정정 M)으로 생성합니다. 일부 구형 스캐너는 한글 내용을 다르게 표시할 수 있습니다.</p>
+    </section>
+
+    <section class="article">
+      <h2>자주 묻는 질문</h2>
+      <div class="faq">
+        <details>
+          <summary>만든 QR코드가 휴대폰에서 안 읽힙니다.</summary>
+          <div class="answer"><p>크기가 너무 작거나 대비가 낮을 때 생깁니다. 300px 이상으로 저장하고, 어두운 색 QR에 흰 바탕을 쓰세요. 인쇄물이라면 2cm 이상 크기로 넣어 보세요.</p></div>
+        </details>
+        <details>
+          <summary>와이파이 QR은 어떻게 쓰나요?</summary>
+          <div class="answer"><p>네트워크 이름과 비밀번호를 넣고 만든 QR을 테이블이나 냉장고에 붙여 두면, 손님이 카메라로 찍어 바로 연결할 수 있습니다. 아이폰·안드로이드 모두 카메라 앱에서 인식됩니다.</p></div>
+        </details>
+        <details>
+          <summary>QR코드 내용을 나중에 바꿀 수 있나요?</summary>
+          <div class="answer"><p>아니요. 이 생성기는 내용을 그대로 담은 고정형 QR을 만듭니다. 내용을 바꾸려면 새로 만들어 다시 인쇄해야 합니다. 주소 변경이 잦다면 짧은 주소로 연결하는 방법을 쓰세요.</p></div>
+        </details>
+        <details>
+          <summary>얼마나 긴 내용까지 넣을 수 있나요?</summary>
+          <div class="answer"><p>이 생성기는 한글 약 130자, 영문 약 400자까지 담을 수 있습니다. 그보다 길면 화면에 안내가 표시됩니다. 주소는 짧을수록 인식이 잘 됩니다.</p></div>
+        </details>
+        <details>
+          <summary>입력한 내용이 서버에 저장되나요?</summary>
+          <div class="answer"><p>아니요. QR 생성은 브라우저 안에서만 이루어지며, 페이지를 닫으면 입력한 내용도 사라집니다.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <section class="also-tools" aria-labelledby="alsoTitle">
+      <div class="also-head">
+        <p class="also-eyebrow">다른 도구 둘러보기</p>
+        <h2 id="alsoTitle">이런 툴도 있어요</h2>
+        <p>가게나 모임 운영에 바로 쓸 수 있는 도구들입니다.</p>
+      </div>
+      <div class="also-grid">
+        <a class="also-card" href="lotto.html">
+          <span class="also-cat cat-life">생활·시간</span>
+          <h3>로또 번호 생성기</h3>
+          <p>이번 주 행운 번호, 1~45에서 6개 뽑기.</p>
+          <span class="also-btn">바로 열기 →</span>
+        </a>
+        <a class="also-card" href="emoji.html">
+          <span class="also-cat cat-text">텍스트·SNS</span>
+          <h3>이모지·특수기호 복사</h3>
+          <p>안내 문구에 넣을 화살표·체크 기호 모음.</p>
+          <span class="also-btn">바로 열기 →</span>
+        </a>
+        <a class="also-card" href="unit-conv.html">
+          <span class="also-cat cat-calc">계산·변환</span>
+          <h3>평수·단위 변환기</h3>
+          <p>매장 넓이, 인쇄물 크기 단위를 바로 변환.</p>
+          <span class="also-btn">바로 열기 →</span>
+        </a>
+        <a class="also-card" href="led-board.html">
+          <span class="also-cat cat-life">생활·시간</span>
+          <h3>모바일 LED 전광판</h3>
+          <p>휴대폰을 응원·안내 전광판으로 바꿔요.</p>
+          <span class="also-btn">바로 열기 →</span>
+        </a>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="logo" href="../index.html">
+          <span class="logo-mark" aria-hidden="true">다</span>
+          <span>다모아툴<span class="logo-sub">DamoaTool</span></span>
+        </a>
+        <p>이모지 복사부터 QR코드·로또 번호 생성까지, 매일 쓰는 15가지 도구를 한곳에 모았습니다. 모든 계산과 변환은 이용자 브라우저 안에서만 처리되며 입력값은 서버로 전송되지 않습니다.</p>
+      </div>
+      <div class="footer-col">
+        <h2>텍스트·SNS</h2>
+        <ul>
+          <li><a href="emoji.html">이모지·특수기호 복사</a></li>
+          <li><a href="font-style.html">줄바꿈·폰트 변환</a></li>
+          <li><a href="char-count.html">글자수·바이트 계산</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>생활·시간</h2>
+        <ul>
+          <li><a href="roulette.html">랜덤 룰렛</a></li>
+          <li><a href="led-board.html">LED 전광판</a></li>
+          <li><a href="timer.html">집중 타이머</a></li>
+          <li><a href="date-calc.html">날짜·D-Day 계산</a></li>
+          <li><a href="qr-gen.html">QR코드 생성</a></li>
+          <li><a href="lotto.html">로또 번호 생성</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>금융·세금</h2>
+        <ul>
+          <li><a href="loan-calc.html">대출 이자 계산</a></li>
+          <li><a href="savings-calc.html">예적금 이자 계산</a></li>
+          <li><a href="salary-calc.html">연봉 실수령액</a></li>
+          <li><a href="yearend-check.html">연말정산 체크</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>계산·변환</h2>
+        <ul>
+          <li><a href="percent-calc.html">퍼센트·할인율</a></li>
+          <li><a href="unit-conv.html">평수·단위 변환</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 다모아툴(DamoaTool). 모든 도구는 무료입니다.</p>
+      <p><a href="../about.html">소개</a> · <a href="../terms.html">이용약관</a> · <a href="../privacy.html">개인정보처리방침</a> · 문의 rlatmdrhkd1@gmail.com</p>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/common.js"></script>
+<script>
+/* ---------------------------------------------------------------
+   가벼운 QR코드 생성기 (바이트 모드, 오류정정 M, 버전 자동 1~15)
+   외부 라이브러리 없이 브라우저에서만 계산합니다.
+   --------------------------------------------------------------- */
+(function () {
+  "use strict";
+
+  /* GF(256) */
+  var EXP = new Uint8Array(512), LOG = new Uint8Array(256);
+  (function () {
+    var x = 1;
+    for (var i = 0; i < 255; i++) {
+      EXP[i] = x;
+      LOG[x] = i;
+      x <<= 1;
+      if (x & 0x100) x ^= 0x11d;
+    }
+    for (var j = 255; j < 512; j++) EXP[j] = EXP[j - 255];
+  })();
+  function mul(a, b) {
+    if (a === 0 || b === 0) return 0;
+    return EXP[LOG[a] + LOG[b]];
+  }
+
+  /* 오류정정 M: [블록당 EC, 블록1 수, 블록1 데이터, 블록2 수, 블록2 데이터] */
+  var RS = {
+    1: [10, 1, 16], 2: [16, 1, 28], 3: [26, 1, 44], 4: [18, 2, 32], 5: [24, 2, 43],
+    6: [16, 4, 27], 7: [18, 4, 31], 8: [22, 2, 38, 2, 39], 9: [22, 3, 36, 2, 37],
+    10: [26, 4, 43, 1, 44], 11: [30, 1, 50, 4, 51], 12: [22, 6, 36, 2, 37],
+    13: [22, 8, 37, 1, 38], 14: [24, 4, 40, 5, 41], 15: [24, 5, 41, 5, 42]
+  };
+  var ALIGN = {
+    1: [], 2: [6, 18], 3: [6, 22], 4: [6, 26], 5: [6, 30], 6: [6, 34], 7: [6, 22, 38],
+    8: [6, 24, 42], 9: [6, 26, 46], 10: [6, 28, 50], 11: [6, 30, 54], 12: [6, 32, 58],
+    13: [6, 34, 62], 14: [6, 26, 46, 66], 15: [6, 26, 48, 70]
+  };
+
+  function dataCodewords(version) {
+    var t = RS[version];
+    var total = t[2] * t[1];
+    if (t.length > 3) total += t[4] * t[3];
+    return total;
+  }
+  function ecPerBlock(version) { return RS[version][0]; }
+  function numBlocks(version) {
+    var t = RS[version];
+    return t.length > 3 ? t[1] + t[3] : t[1];
+  }
+  function byteCapacity(version) {
+    var header = version >= 10 ? 20 : 12;
+    return Math.floor((dataCodewords(version) * 8 - header) / 8);
+  }
+
+  function utf8Bytes(str) {
+    if (window.TextEncoder) return Array.prototype.slice.call(new TextEncoder().encode(str));
+    var out = [], s = unescape(encodeURIComponent(str));
+    for (var i = 0; i < s.length; i++) out.push(s.charCodeAt(i));
+    return out;
+  }
+
+  function genPoly(n) {
+    var poly = [1];
+    for (var i = 0; i < n; i++) {
+      var next = new Array(poly.length + 1);
+      for (var z = 0; z < next.length; z++) next[z] = 0;
+      for (var k = 0; k < poly.length; k++) {
+        next[k] ^= poly[k];
+        next[k + 1] ^= mul(poly[k], EXP[i]);
+      }
+      poly = next;
+    }
+    return poly;
+  }
+
+  function rsRemainder(data, ecLen) {
+    var gen = genPoly(ecLen);
+    var res = new Uint8Array(data.length + ecLen);
+    res.set(data, 0);
+    for (var i = 0; i < data.length; i++) {
+      var coef = res[i];
+      if (!coef) continue;
+      for (var j = 0; j < gen.length; j++) {
+        res[i + j] ^= mul(gen[j], coef);
+      }
+    }
+    return Array.prototype.slice.call(res.subarray(data.length));
+  }
+
+  function buildCodewords(bytes, version) {
+    var totalData = dataCodewords(version);
+    var bits = [];
+    function push(value, len) {
+      for (var i = len - 1; i >= 0; i--) bits.push((value >> i) & 1);
+    }
+    push(4, 4); // 바이트 모드
+    push(bytes.length, version >= 10 ? 16 : 8);
+    for (var i = 0; i < bytes.length; i++) push(bytes[i], 8);
+    var capacityBits = totalData * 8;
+    for (var t = 0; t < 4 && bits.length < capacityBits; t++) bits.push(0);
+    while (bits.length % 8 !== 0) bits.push(0);
+    var data = [];
+    for (var b = 0; b < bits.length; b += 8) {
+      var v = 0;
+      for (var k = 0; k < 8; k++) v = (v << 1) | bits[b + k];
+      data.push(v);
+    }
+    var pads = [0xec, 0x11], p = 0;
+    while (data.length < totalData) {
+      data.push(pads[p % 2]);
+      p++;
+    }
+
+    var table = RS[version];
+    var blocks = [];
+    var offset = 0;
+    var b1 = table[1], d1 = table[2];
+    for (var i2 = 0; i2 < b1; i2++) {
+      blocks.push(data.slice(offset, offset + d1));
+      offset += d1;
+    }
+    if (table.length > 3) {
+      var b2 = table[3], d2 = table[4];
+      for (var i3 = 0; i3 < b2; i3++) {
+        blocks.push(data.slice(offset, offset + d2));
+        offset += d2;
+      }
+    }
+
+    var ecLen = ecPerBlock(version);
+    var ecBlocks = blocks.map(function (blk) { return rsRemainder(blk, ecLen); });
+
+    var out = [];
+    var maxData = Math.max.apply(null, blocks.map(function (b) { return b.length; }));
+    for (var c = 0; c < maxData; c++) {
+      for (var r = 0; r < blocks.length; r++) {
+        if (c < blocks[r].length) out.push(blocks[r][c]);
+      }
+    }
+    for (var e = 0; e < ecLen; e++) {
+      for (var r2 = 0; r2 < ecBlocks.length; r2++) out.push(ecBlocks[r2][e]);
+    }
+    return out;
+  }
+
+  function bch15(data) {
+    var d = data << 10;
+    for (var i = 4; i >= 0; i--) {
+      if ((d >> (i + 10)) & 1) d ^= 0x537 << i;
+    }
+    return ((data << 10) | d) ^ 0x5412;
+  }
+  function bchVersion(version) {
+    var d = version << 12;
+    function digit(v) { var c = 0; while (v !== 0) { c++; v >>>= 1; } return c; }
+    while (digit(d) - digit(0x1f25) >= 0) {
+      d ^= 0x1f25 << (digit(d) - digit(0x1f25));
+    }
+    return (version << 12) | d;
+  }
+
+  /* 행렬 생성 */
+  function buildMatrix(version, codewords, mask) {
+    var size = version * 4 + 17;
+    var m = [], res = [];
+    for (var r = 0; r < size; r++) {
+      m.push(new Array(size).fill(0));
+      res.push(new Array(size).fill(false));
+    }
+    function put(r, c, dark) {
+      if (r < 0 || c < 0 || r >= size || c >= size) return;
+      m[r][c] = dark ? 1 : 0;
+      res[r][c] = true;
+    }
+    function finder(r0, c0) {
+      for (var r = -1; r <= 7; r++) {
+        for (var c = -1; c <= 7; c++) {
+          var on = (r >= 0 && r <= 6 && (c === 0 || c === 6)) ||
+                   (c >= 0 && c <= 6 && (r === 0 || r === 6)) ||
+                   (r >= 2 && r <= 4 && c >= 2 && c <= 4);
+          put(r0 + r, c0 + c, on);
+        }
+      }
+    }
+    finder(0, 0);
+    finder(0, size - 7);
+    finder(size - 7, 0);
+
+    for (var i = 8; i < size - 8; i++) {
+      var dark = i % 2 === 0;
+      put(6, i, dark);
+      put(i, 6, dark);
+    }
+
+    var pos = ALIGN[version];
+    for (var a = 0; a < pos.length; a++) {
+      for (var b = 0; b < pos.length; b++) {
+        var pr = pos[a], pc = pos[b];
+        if ((pr === 6 && pc === 6) || (pr === 6 && pc === size - 7) || (pr === size - 7 && pc === 6)) continue;
+        for (var dr = -2; dr <= 2; dr++) {
+          for (var dc = -2; dc <= 2; dc++) {
+            put(pr + dr, pc + dc, Math.max(Math.abs(dr), Math.abs(dc)) !== 1);
+          }
+        }
+      }
+    }
+
+    /* 형식 정보 자리 비우기 */
+    for (var f = 0; f <= 8; f++) {
+      if (!res[8][f]) { res[8][f] = true; m[8][f] = 0; }
+      if (!res[f][8]) { res[f][8] = true; m[f][8] = 0; }
+    }
+    for (var g = 0; g < 8; g++) {
+      if (!res[8][size - 1 - g]) { res[8][size - 1 - g] = true; m[8][size - 1 - g] = 0; }
+      if (!res[size - 1 - g][8]) { res[size - 1 - g][8] = true; m[size - 1 - g][8] = 0; }
+    }
+    put(size - 8, 8, true);
+
+    if (version >= 7) {
+      for (var v1 = 0; v1 < 6; v1++) {
+        for (var v2 = 0; v2 < 3; v2++) {
+          put(size - 11 + v2, v1, false);
+          put(v1, size - 11 + v2, false);
+        }
+      }
+    }
+
+    /* 데이터 배치 */
+    var bitIndex = 0;
+    var totalBits = codewords.length * 8;
+    var upward = true;
+    for (var col = size - 1; col > 0; col -= 2) {
+      if (col === 6) col--;
+      for (var step = 0; step < size; step++) {
+        var row = upward ? size - 1 - step : step;
+        for (var cc = 0; cc < 2; cc++) {
+          var c2 = col - cc;
+          if (res[row][c2]) continue;
+          var bit = 0;
+          if (bitIndex < totalBits) bit = (codewords[bitIndex >> 3] >> (7 - (bitIndex & 7))) & 1;
+          m[row][c2] = bit;
+          bitIndex++;
+        }
+      }
+      upward = !upward;
+    }
+
+    /* 마스크 적용 */
+    for (var r3 = 0; r3 < size; r3++) {
+      for (var c3 = 0; c3 < size; c3++) {
+        if (res[r3][c3]) continue;
+        var on;
+        switch (mask) {
+          case 0: on = (r3 + c3) % 2 === 0; break;
+          case 1: on = r3 % 2 === 0; break;
+          case 2: on = c3 % 3 === 0; break;
+          case 3: on = (r3 + c3) % 3 === 0; break;
+          case 4: on = (Math.floor(r3 / 2) + Math.floor(c3 / 3)) % 2 === 0; break;
+          case 5: on = (r3 * c3) % 2 + (r3 * c3) % 3 === 0; break;
+          case 6: on = ((r3 * c3) % 2 + (r3 * c3) % 3) % 2 === 0; break;
+          default: on = ((r3 + c3) % 2 + (r3 * c3) % 3) % 2 === 0;
+        }
+        if (on) m[r3][c3] ^= 1;
+      }
+    }
+
+    /* 형식 정보 (EC M = 00) */
+    var fmt = bch15((0 << 3) | mask);
+    for (var q = 0; q < 15; q++) {
+      var bitv = ((fmt >> q) & 1) === 1;
+      if (q < 6) m[q][8] = bitv ? 1 : 0;
+      else if (q < 8) m[q + 1][8] = bitv ? 1 : 0;
+      else m[size - 15 + q][8] = bitv ? 1 : 0;
+
+      if (q < 8) m[8][size - q - 1] = bitv ? 1 : 0;
+      else if (q < 9) m[8][15 - q - 1 + 1] = bitv ? 1 : 0;
+      else m[8][15 - q - 1] = bitv ? 1 : 0;
+    }
+    m[size - 8][8] = 1;
+
+    /* 버전 정보 */
+    if (version >= 7) {
+      var vbits = bchVersion(version);
+      for (var vi = 0; vi < 18; vi++) {
+        var vb = ((vbits >> vi) & 1) === 1;
+        m[Math.floor(vi / 3)][vi % 3 + size - 8 - 3] = vb ? 1 : 0;
+        m[vi % 3 + size - 8 - 3][Math.floor(vi / 3)] = vb ? 1 : 0;
+      }
+    }
+    return m;
+  }
+
+  /* 마스크 점수 */
+  function penalty(m) {
+    var size = m.length, score = 0, r, c, run, dark = 0;
+    for (r = 0; r < size; r++) {
+      run = 1;
+      for (c = 1; c < size; c++) {
+        if (m[r][c] === m[r][c - 1]) { run++; if (run === 5) score += 3; else if (run > 5) score++; }
+        else run = 1;
+      }
+    }
+    for (c = 0; c < size; c++) {
+      run = 1;
+      for (r = 1; r < size; r++) {
+        if (m[r][c] === m[r - 1][c]) { run++; if (run === 5) score += 3; else if (run > 5) score++; }
+        else run = 1;
+      }
+    }
+    for (r = 0; r < size - 1; r++) {
+      for (c = 0; c < size - 1; c++) {
+        var v = m[r][c];
+        if (
+          m[r][c + 1] === v && m[r + 1][c] === v && m[r + 1][c + 1] === v
+        ) score += 3;
+      }
+    }
+    function findPattern(get, len) {
+      var s = "";
+      for (var i = 0; i < len; i++) s += get(i) ? "1" : "0";
+      var cnt = 0;
+      cnt += (s.split("10111010000").length - 1) * 40;
+      cnt += (s.split("00001011101").length - 1) * 40;
+      return cnt;
+    }
+    for (r = 0; r < size; r++) {
+      (function (row) { score += findPattern(function (i) { return m[row][i] === 1; }, size); })(r);
+    }
+    for (c = 0; c < size; c++) {
+      (function (col) { score += findPattern(function (i) { return m[i][col] === 1; }, size); })(c);
+    }
+    for (r = 0; r < size; r++) for (c = 0; c < size; c++) if (m[r][c]) dark++;
+    var ratio = dark * 100 / (size * size);
+    score += Math.floor(Math.abs(ratio - 50) / 5) * 10;
+    return score;
+  }
+
+  function encode(text) {
+    var bytes = utf8Bytes(text);
+    var version = 0;
+    for (var v = 1; v <= 15; v++) {
+      if (bytes.length <= byteCapacity(v)) { version = v; break; }
+    }
+    if (!version) return { error: "내용이 너무 깁니다. 한글 약 130자(영문 약 410자) 안으로 줄여 주세요." };
+    var codewords = buildCodewords(bytes, version);
+    var best = null, bestScore = Infinity;
+    for (var mask = 0; mask < 8; mask++) {
+      var matrix = buildMatrix(version, codewords, mask);
+      var sc = penalty(matrix);
+      if (sc < bestScore) { bestScore = sc; best = matrix; }
+    }
+    return { matrix: best, version: version, bytes: bytes.length };
+  }
+
+  /* ---------- 화면 ---------- */
+  function el(id) { return document.getElementById(id); }
+  var canvas = el("qrCanvas");
+  var ctx = canvas.getContext("2d");
+  var errorBox = el("qrError");
+  var metaBox = el("qrMeta");
+
+  function payload() {
+    var mode = document.querySelector('input[name="qmode"]:checked').value;
+    if (mode === "text") return el("qrText").value;
+    var ssid = el("wifiSsid").value;
+    if (!ssid) return "";
+    var sec = el("wifiSec").value;
+    var pass = sec === "nopass" ? "" : el("wifiPass").value;
+    function esc(s) { return String(s).replace(/([\\;,:"])/g, "\\$1"); }
+    return "WIFI:T:" + sec + ";S:" + esc(ssid) + ";P:" + esc(pass) + ";H:" + (el("wifiHidden").checked ? "true" : "false") + ";;";
+  }
+
+  function draw(sizePx) {
+    var text = payload();
+    errorBox.hidden = true;
+    errorBox.textContent = "";
+    if (!text) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      canvas.width = canvas.height = sizePx;
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, sizePx, sizePx);
+      metaBox.textContent = "내용을 입력하면 QR코드가 만들어집니다.";
+      return;
+    }
+    var result = encode(text);
+    if (result.error) {
+      errorBox.hidden = false;
+      errorBox.textContent = result.error;
+      return;
+    }
+    var m = result.matrix;
+    var n = m.length;
+    var quiet = 4;
+    var total = n + quiet * 2;
+    var scale = Math.max(1, Math.floor(sizePx / total));
+    var px = total * scale;
+    canvas.width = px;
+    canvas.height = px;
+    var fg = el("qrFg").value;
+    var bg = el("qrBg").value;
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, px, px);
+    ctx.fillStyle = fg;
+    for (var r = 0; r < n; r++) {
+      for (var c = 0; c < n; c++) {
+        if (m[r][c]) ctx.fillRect((c + quiet) * scale, (r + quiet) * scale, scale, scale);
+      }
+    }
+    metaBox.textContent = "버전 " + result.version + " · " + result.bytes + "바이트 · " + px + "×" + px + "px";
+  }
+
+  function refresh() { draw(Number(el("qrSize").value)); }
+
+  var radios = document.querySelectorAll('input[name="qmode"]');
+  for (var i = 0; i < radios.length; i++) {
+    radios[i].addEventListener("change", function () {
+      var wifi = document.querySelector('input[name="qmode"]:checked').value === "wifi";
+      el("panelText").hidden = wifi;
+      el("panelWifi").hidden = !wifi;
+      refresh();
+    });
+  }
+  var fields = ["qrText", "wifiSsid", "wifiPass", "wifiSec", "wifiHidden", "qrFg", "qrBg", "qrSize"];
+  for (var f = 0; f < fields.length; f++) {
+    el(fields[f]).addEventListener("input", refresh);
+    el(fields[f]).addEventListener("change", refresh);
+  }
+
+  el("downloadBtn").addEventListener("click", function () {
+    var text = payload();
+    if (!text) { DT.toast("내용을 먼저 입력해 주세요"); return; }
+    var size = Number(el("qrSize").value);
+    draw(size);
+    var name = "damoatool-qrcode.png";
+    if (canvas.toBlob) {
+      canvas.toBlob(function (blob) {
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+        DT.toast("PNG 이미지를 저장했어요");
+      }, "image/png");
+    } else {
+      var a2 = document.createElement("a");
+      a2.href = canvas.toDataURL("image/png");
+      a2.download = name;
+      document.body.appendChild(a2);
+      a2.click();
+      document.body.removeChild(a2);
+      DT.toast("PNG 이미지를 저장했어요");
+    }
+  });
+
+  el("resetBtn").addEventListener("click", function () {
+    document.getElementById("qmodeText").checked = true;
+    el("panelText").hidden = false;
+    el("panelWifi").hidden = true;
+    el("qrText").value = "https://pogo-obaksa.github.io/damoatool/";
+    el("wifiSsid").value = "MyHome_WiFi";
+    el("wifiPass").value = "12345678";
+    el("wifiSec").value = "WPA";
+    el("wifiHidden").checked = false;
+    el("qrFg").value = "#111827";
+    el("qrBg").value = "#ffffff";
+    el("qrSize").value = "300";
+    refresh();
+  });
+
+  refresh();
+})();
+</script>
+</body>
+</html>
