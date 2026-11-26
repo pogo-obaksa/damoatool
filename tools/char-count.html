@@ -12,7 +12,19 @@
 <meta property="og:description" content="공백 포함·제외 글자수, UTF-8/EUC-KR 바이트, 원고지 매수를 입력과 동시에 계산합니다.">
 <meta property="og:url" content="https://pogo-obaksa.github.io/damoatool/tools/char-count.html">
 <meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://pogo-obaksa.github.io/damoatool/assets/og-damoatool.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="다모아툴 - 매일 쓰는 무료 웹툴 10종">
+<meta property="og:site_name" content="다모아툴">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="글자수·바이트 계산기 | 다모아툴">
+<meta name="twitter:description" content="공백 포함·제외 글자수, UTF-8/EUC-KR 바이트, 원고지 매수를 입력과 동시에 계산합니다.">
+<meta name="twitter:image" content="https://pogo-obaksa.github.io/damoatool/assets/og-damoatool.jpg">
 <meta name="theme-color" content="#1d4ed8">
+<!-- Google AdSense -->
+<meta name="google-adsense-account" content="ca-pub-2879207392914466">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2879207392914466" crossorigin="anonymous"></script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231d4ed8'/%3E%3Ctext x='32' y='44' font-size='34' font-weight='700' text-anchor='middle' fill='white' font-family='sans-serif'%3E%EB%8B%A4%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
@@ -146,6 +158,19 @@
         <b>원고지</b> — 200자 원고지 1매 = 200자 (공백 포함)
       </div>
       <p>같은 글이라도 어떤 인코딩으로 저장하느냐에 따라 바이트 수가 두 배 이상 차이 납니다. 한글이 많은 글을 EUC-KR로 저장하면 UTF-8보다 작아지고, 이모지를 넣으면 UTF-8에서는 4바이트가 늘어납니다. 제출처가 "바이트"를 기준으로 한다면 어떤 인코딩 기준인지 먼저 확인하세요.</p>
+
+      <h2>제출 직전에 확인할 세 가지</h2>
+      <p>첫째, 기준을 맞춰야 합니다. 채용 사이트가 공백 포함인지 제외인지, 바이트라면 UTF-8인지 EUC-KR인지에 따라 결과가 달라집니다. 둘째, 붙여 넣은 뒤 숫자를 한 번 더 보세요. 워드프로세서에서 옮겨 오는 과정에 글머리표나 빈 칸이 섞이면 글자수가 몇 자씩 늘어납니다. 셋째, 제한의 90% 안쪽에서 마무리하세요. 제출 화면에서 초과로 반려되는 일을 줄일 수 있습니다.</p>
+      <p>SNS는 플랫폼마다 세는 방식이 다릅니다. X(트위터)는 영문 기준 280자지만 한글과 한자는 글자당 2자로 계산해 약 140자까지 들어가고, 링크는 길이와 상관없이 정해진 자수로 계산됩니다. 인스타그램 캡션은 2,200자까지 쓸 수 있지만 첫 두 줄만 미리 보이므로 핵심을 앞에 두는 편이 좋습니다.</p>
+
+      <h2>주의할 점</h2>
+      <ul>
+        <li>이모지와 특수문자는 화면에 한 글자로 보여도 바이트는 3~4바이트까지 늘어납니다.</li>
+        <li>원고지 매수는 공모전·출판사마다 200자·400자 기준이 달라 지원 요강을 먼저 확인하세요.</li>
+        <li>표·각주·머리글은 워드프로세서 글자수에 포함되지 않는 경우가 많습니다.</li>
+        <li>엔터로 만든 빈 줄은 글자수에서 빠지지만 바이트에서는 줄바꿈 문자로 계산됩니다.</li>
+      </ul>
+      <p class="note">기준일: 2026년 11월 26일 기준입니다. UTF-8은 한글 3바이트, EUC-KR은 한글 2바이트로 계산했고, 플랫폼별 제한과 계산 방식은 각 서비스의 공개 안내를 따랐습니다. 정책에 따라 바뀔 수 있습니다.</p>
     </section>
 
     <section class="article">

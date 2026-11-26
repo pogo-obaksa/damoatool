@@ -1490,6 +1490,64 @@ td strong {
   }
 }
 
+/* ---------- 기준값 안내 박스 (js/rates.js) ---------- */
+.rate-notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin-top: 20px;
+  padding: 15px 18px;
+  background: var(--blue-soft);
+  border: 1px solid var(--blue-line);
+  border-radius: var(--radius-sm);
+}
+
+.rate-notice-label {
+  flex-shrink: 0;
+  padding: 3px 11px;
+  border-radius: 999px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+.rate-notice-body {
+  margin: 0;
+  font-size: 16.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+.rate-notice-body strong {
+  font-weight: 800;
+  color: var(--blue-dark);
+}
+
+.rate-notice-meta {
+  display: block;
+  margin-top: 2px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+@media (max-width: 720px) {
+  .rate-notice {
+    padding: 14px 15px;
+  }
+
+  .rate-notice-body {
+    font-size: 15.5px;
+  }
+
+  .rate-notice-meta {
+    font-size: 13.5px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
