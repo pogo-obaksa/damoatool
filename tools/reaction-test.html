@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>반응속도 테스트 - 5회 평균·ms 측정·최고기록 저장 | 다모아툴</title>
+<meta name="description" content="화면이 초록색으로 바뀌는 순간 클릭하면 반응속도를 ms 단위로 측정합니다. 5회 평균, 최고 기록 저장, 상위 % 등급까지. 회원가입 없는 무료 반응속도 테스트.">
+<meta name="keywords" content="반응속도 테스트, 반응속도 측정, 리액션 테스트, 반응 속도 평균, 순발력 테스트, ms 측정, 게임 반응속도">
+<link rel="canonical" href="https://pogo-obaksa.github.io/damoatool/tools/reaction-test.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="반응속도 테스트 - 5회 평균 측정 | 다모아툴">
+<meta property="og:description" content="초록색으로 바뀌는 순간 누르세요. 5회 평균 반응속도와 상위 등급, 최고 기록 저장까지.">
+<meta property="og:url" content="https://pogo-obaksa.github.io/damoatool/tools/reaction-test.html">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://pogo-obaksa.github.io/damoatool/assets/og-damoatool.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="다모아툴 - 매일 쓰는 무료 웹툴 17종">
+<meta property="og:site_name" content="다모아툴">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="반응속도 테스트 - 5회 평균 측정 | 다모아툴">
+<meta name="twitter:description" content="초록색으로 바뀌는 순간 누르세요. 5회 평균 반응속도와 상위 등급, 최고 기록 저장까지.">
+<meta name="twitter:image" content="https://pogo-obaksa.github.io/damoatool/assets/og-damoatool.jpg">
+<meta name="theme-color" content="#1d4ed8">
+<!-- Google AdSense -->
+<meta name="google-adsense-account" content="ca-pub-2879207392914466">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2879207392914466" crossorigin="anonymous"></script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231d4ed8'/%3E%3Ctext x='32' y='44' font-size='34' font-weight='700' text-anchor='middle' fill='white' font-family='sans-serif'%3E%EB%8B%A4%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="../css/style.css">
+<style>
+  .rx-stage {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; min-height: 300px; padding: 26px 18px; margin-top: 6px;
+    border: 2px solid var(--line-strong); border-radius: 18px; background: #f1f5f9;
+    text-align: center; cursor: pointer;
+    user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: background .12s ease, border-color .12s ease;
+  }
+  .rx-stage:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+  .rx-stage[data-state="waiting"] { background: #fff7ed; border-color: #fdba74; }
+  .rx-stage[data-state="ready"] { background: #059669; border-color: #047857; }
+  .rx-stage[data-state="result"] { background: var(--blue-soft); border-color: var(--blue-line); }
+  .rx-stage[data-state="early"] { background: #fef2f2; border-color: #fca5a5; }
+  .rx-stage .rx-label {
+    font-size: 16px; font-weight: 800; color: var(--muted); letter-spacing: 0.02em;
+  }
+  .rx-stage .rx-big {
+    font-size: clamp(40px, 11vw, 62px); font-weight: 800; color: var(--ink);
+    letter-spacing: -0.04em; line-height: 1.15; font-variant-numeric: tabular-nums;
+  }
+  .rx-stage .rx-sub { font-size: 15.5px; font-weight: 600; color: var(--muted); line-height: 1.55; }
+  .rx-stage[data-state="ready"] .rx-label,
+  .rx-stage[data-state="ready"] .rx-sub { color: rgba(255, 255, 255, 0.9); }
+  .rx-stage[data-state="ready"] .rx-big { color: #fff; }
+  .rx-stage[data-state="early"] .rx-big { color: #b91c1c; font-size: clamp(30px, 8vw, 42px); }
+  .rx-stage[data-state="early"] .rx-label { color: #b91c1c; }
+  .rx-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+  .rx-actions .btn { flex: 1 1 140px; }
+  .rx-tries { display: flex; gap: 8px; margin-top: 18px; }
+  .rx-try {
+    flex: 1 1 0; min-width: 0; padding: 10px 4px; border: 1px solid var(--line);
+    border-radius: 12px; background: #fff; text-align: center;
+  }
+  .rx-try .n { display: block; font-size: 13px; font-weight: 700; color: var(--muted); }
+  .rx-try .ms { display: block; font-size: 17.5px; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .rx-try.pending .ms { color: #cbd5e1; }
+  .rx-try.is-best { border-color: #bbf0dc; background: #f3fdf9; }
+  .rx-try.is-best .ms { color: var(--emerald); }
+  .rx-grade {
+    margin-top: 18px; padding: 15px 16px; border-radius: 12px;
+    border: 1px solid #bbf0dc; background: var(--emerald-soft);
+    font-size: 16px; font-weight: 700; color: var(--emerald-dark); line-height: 1.6;
+  }
+  .rx-grade b { font-size: 18px; }
+  .rx-grade[hidden] { display: none; }
+  .rx-grade.warn { border-color: #f3d9a4; background: var(--amber-soft); color: var(--amber); }
+  @media (max-width: 680px) {
+    .rx-stage { min-height: 260px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="logo" href="../index.html">
+      <span class="logo-mark" aria-hidden="true">다</span>
+      <span>다모아툴<span class="logo-sub">생활이 편해지는 무료 웹툴</span></span>
+    </a>
+    <button class="nav-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mainNav"><span></span></button>
+    <nav class="main-nav" id="mainNav" aria-label="주요 메뉴">
+      <a href="../index.html">홈</a>
+      <a href="../index.html#tools">전체 도구</a>
+      <a href="../about.html">소개</a>
+      <a href="../privacy.html">개인정보</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="page-head">
+      <nav class="breadcrumb" aria-label="위치">
+        <a href="../index.html">홈</a><span class="sep">/</span><a href="../index.html#tools">생활·시간</a><span class="sep">/</span><span>반응속도 테스트</span>
+      </nav>
+      <h1>반응속도 테스트</h1>
+      <p class="lead">화면이 <b>초록색으로 바뀌는 순간</b> 클릭하거나 터치하세요. 5회 평균으로 내 반응속도를 ms 단위로 재고, 최고 기록은 브라우저에 저장해 드립니다.</p>
+    </div>
+
+    <div class="tool-layout" style="margin-top:24px">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>반응속도 측정</h2>
+            <p>시작을 누르고, 초록색이 되면 바로 누르세요.</p>
+          </div>
+        </div>
+
+        <div class="rx-stage" id="stage" data-state="idle" tabindex="0" role="button" aria-label="반응속도 측정 화면. 눌러서 시작하고 초록색이 되면 다시 누르세요.">
+          <span class="rx-label" id="stageLabel">준비</span>
+          <span class="rx-big" id="stageBig">시작</span>
+          <span class="rx-sub" id="stageSub">아래 시작 버튼이나 이 화면을 누르면 시작합니다.</span>
+        </div>
+
+        <div class="rx-actions">
+          <button class="btn btn-primary" type="button" id="startBtn">측정 시작</button>
+          <button class="btn btn-ghost" type="button" id="clearBtn">최고 기록 지우기</button>
+        </div>
+
+        <p class="note">초록색이 되기 전에 누르면 <strong>성급한 클릭</strong>으로 처리되어 그 시도는 기록되지 않습니다. 키보드 스페이스·엔터로도 측정할 수 있어요.</p>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>측정 기록</h2>
+            <p id="tryLine">아직 기록이 없습니다. 5회를 채우면 평균이 나옵니다.</p>
+          </div>
+        </div>
+
+        <div class="result">
+          <span class="label">5회 평균 반응속도</span>
+          <span class="value" id="avgValue">-</span>
+          <span class="sub" id="avgSub">5회를 모두 마치면 평균과 등급을 보여 드립니다.</span>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat"><span class="k">이번 판 최고</span><span class="v" id="bestThis">-</span></div>
+          <div class="stat"><span class="k">내 최고 기록</span><span class="v" id="bestAll">-</span></div>
+          <div class="stat"><span class="k">성급한 클릭</span><span class="v" id="earlyCount">0<em>회</em></span></div>
+        </div>
+
+        <div class="rx-tries" id="tries" aria-label="시도별 기록">
+          <div class="rx-try pending"><span class="n">1회</span><span class="ms">-</span></div>
+          <div class="rx-try pending"><span class="n">2회</span><span class="ms">-</span></div>
+          <div class="rx-try pending"><span class="n">3회</span><span class="ms">-</span></div>
+          <div class="rx-try pending"><span class="n">4회</span><span class="ms">-</span></div>
+          <div class="rx-try pending"><span class="n">5회</span><span class="ms">-</span></div>
+        </div>
+
+        <p class="rx-grade" id="gradeLine" hidden></p>
+      </div>
+    </div>
+
+    <section class="article">
+      <h2>반응속도 테스트는 무엇을 재나요</h2>
+      <p>이 테스트가 재는 것은 <strong>자극에서 반응까지 걸린 시간</strong>입니다. 화면이 초록색으로 바뀌는 순간을 눈으로 보고, 손가락이나 마우스를 눌러 컴퓨터가 그 입력을 받아들이기까지의 시간을 밀리초(ms) 단위로 표시합니다. 1,000ms가 1초이므로 250ms는 0.25초, 즉 눈 깜짝할 사이입니다. 화면이 바뀌기까지 기다리는 시간은 매번 1.2~4초 사이에서 무작위로 달라지므로, 다음 신호가 언제 올지 미리 짐작할 수 없습니다. 그래야 눈으로 본 뒤 반응한 시간이 제대로 재어집니다.</p>
+      <p>측정은 5회를 한 판으로 봅니다. 한 번의 기록은 운에 따라 크게 흔들리기 때문에, 다섯 번을 재어 평균을 내면 그날의 반응속도를 조금 더 안정적으로 볼 수 있습니다. 초록색으로 바뀌기 전에 누르면 <strong>성급한 클릭</strong>으로 처리되어 그 시도는 기록에 포함되지 않고 처음부터 다시 시작합니다. 미리 예상해서 누르는 습관을 막기 위한 장치입니다.</p>
+
+      <h2>평균은 어느 정도일까요</h2>
+      <p>사람의 시각 자극에 대한 반응속도는 대체로 <strong>200~300ms</strong> 사이에 모입니다. 여러 연구와 온라인 테스트에서 흔히 인용되는 성인 평균은 250ms 안팎입니다. 이 테스트의 등급은 그 기준을 참고해 나눈 것이며, 200ms 아래로 내려가면 상위 10% 안쪽, 180ms 아래면 상위 1% 수준으로 안내합니다. 반대로 350ms를 넘으면 그날의 컨디션이나 기기 환경을 한 번 살펴보는 편이 좋습니다.</p>
+      <p>등급은 절대적인 순위가 아니라 <strong>참고용 표시</strong>입니다. 반응속도는 나이, 수면 부족, 카페인, 피로, 화면 밝기, 손가락 위치에 따라 같은 사람도 하루 안에서 수십 ms씩 달라집니다. 어제 220ms였다가 오늘 290ms가 나와도 이상한 일이 아닙니다. 여러 날 재어 보며 내 평균적인 범위를 아는 것이 한 번의 기록보다 쓸모 있습니다.</p>
+
+      <h2>기록을 줄이는 방법</h2>
+      <ul>
+        <li><strong>손가락을 미리 준비하세요.</strong> 마우스라면 버튼 위에 손가락을 올려 두고, 휴대폰이라면 엄지나 검지를 화면 가까이 둡니다.</li>
+        <li><strong>화면을 똑바로 보세요.</strong> 시선이 화면 가장자리에 있으면 색이 바뀐 것을 늦게 알아차립니다.</li>
+        <li><strong>숨을 참지 마세요.</strong> 긴장해서 숨을 멈추면 오히려 반응이 느려지고 기록이 들쭉날쭉해집니다.</li>
+        <li><strong>예상해서 누르지 마세요.</strong> 성급한 클릭은 기록되지 않으니, 초록색을 확인한 뒤 누르는 편이 결국 빠릅니다.</li>
+        <li><strong>밝은 곳에서 하세요.</strong> 어두운 방이나 눈부신 야외에서는 색 변화를 알아채는 시간이 길어집니다.</li>
+      </ul>
+
+      <h2>기록에 영향을 주는 것들</h2>
+      <p>같은 사람이 같은 자세로 눌러도 기기에 따라 결과가 달라집니다. 무선 마우스나 블루투스 키보드는 입력이 전달되는 데 몇 ms가 더 걸릴 수 있고, 화면 주사율이 낮은 모니터나 오래된 휴대폰은 색이 실제로 바뀌어 그려지기까지 시간이 걸립니다. 브라우저가 다른 탭을 처리하느라 바쁘면 측정 자체가 밀리기도 합니다. 그래서 이 페이지는 측정 중 화면 갱신을 최소화하고, 신호가 그려진 시각과 입력이 들어온 시각의 차이를 기준으로 계산합니다.</p>
+      <p>친구와 기록을 비교할 때는 같은 기기, 같은 자리에서 번갈아 재는 편이 공정합니다. 노트북과 휴대폰의 기록을 그대로 비교하면 기기 차이가 섞여 들어갑니다. 기록은 최고치 하나만 남기지 말고 평균과 함께 보세요. 한 번의 행운보다 다섯 번의 평균이 내 반응속도를 더 잘 보여 줍니다.</p>
+
+      <h2>기록은 어디에 저장되나요</h2>
+      <p>가장 빠른 기록은 <strong>이 브라우저의 로컬 저장소(localStorage)</strong>에만 저장됩니다. 서버로 보내지 않고, 계정도 만들지 않습니다. 같은 브라우저로 다시 열면 내 최고 기록이 그대로 보이고, 브라우저의 사이트 데이터를 지우거나 다른 기기에서 열면 기록은 나타나지 않습니다. 저장된 기록을 없애고 싶다면 화면의 <strong>최고 기록 지우기</strong> 버튼을 누르면 됩니다.</p>
+      <p class="note">기준일: 2026년 11월 26일 기준입니다. 등급 구간은 온라인에서 널리 인용되는 성인 평균 반응속도(약 250ms)를 참고해 이 도구에서 임의로 나눈 값이며, 공인된 규격이나 의학적 기준이 아닙니다. 측정값은 브라우저와 기기의 성능에 따라 실제보다 몇 ms에서 수십 ms까지 차이가 날 수 있습니다.</p>
+
+      <h2>이런 때 써 보세요</h2>
+      <ul>
+        <li>게임을 시작하기 전에 손과 눈을 깨우는 몸풀기로</li>
+        <li>수면 부족이나 피로가 반응에 얼마나 영향을 주는지 확인할 때</li>
+        <li>친구·가족과 같은 기기로 번갈아 재며 가볍게 겨룰 때</li>
+        <li>새 마우스나 휴대폰으로 바꾼 뒤 입력 지연이 느껴지는지 볼 때</li>
+      </ul>
+    </section>
+
+    <section class="article">
+      <h2>자주 묻는 질문</h2>
+      <div class="faq">
+        <details>
+          <summary>5회를 꼭 채워야 하나요?</summary>
+          <div class="answer"><p>평균과 등급은 5회를 채워야 나옵니다. 중간에 그만두고 다시 시작하면 그때까지의 기록은 지워지고 1회부터 다시 셉니다. 이번 판 최고 기록은 매 시도마다 바로 갱신됩니다.</p></div>
+        </details>
+        <details>
+          <summary>초록색이 되기 전에 눌렀어요.</summary>
+          <div class="answer"><p>성급한 클릭으로 처리되어 그 시도는 기록되지 않습니다. 화면에 안내가 나오면 다시 눌러 새로 시작하면 됩니다. 성급한 클릭 횟수는 오른쪽 기록 영역에 따로 표시됩니다.</p></div>
+        </details>
+        <details>
+          <summary>기록이 갑자기 느려졌어요.</summary>
+          <div class="answer"><p>수면 부족, 피로, 카페인, 화면 밝기, 다른 탭의 부하 때문에 같은 기기에서도 달라집니다. 브라우저 탭을 여러 개 열어 두면 측정이 밀릴 수 있으니 이 페이지만 열어 두고 재 보세요.</p></div>
+        </details>
+        <details>
+          <summary>휴대폰에서도 정확한가요?</summary>
+          <div class="answer"><p>터치 화면은 손가락이 닿은 뒤 인식되는 과정이 있어 마우스보다 조금 느리게 나오는 경우가 많습니다. 같은 기기 안에서 이전 기록과 비교하는 용도로 쓰시면 충분합니다.</p></div>
+        </details>
+        <details>
+          <summary>저장한 최고 기록은 어디에 남나요?</summary>
+          <div class="answer"><p>내 브라우저의 로컬 저장소에만 남습니다. 서버로 전송되지 않으며, 브라우저의 사이트 데이터를 지우면 함께 사라집니다. 화면의 최고 기록 지우기 버튼으로 직접 지울 수도 있습니다.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <section class="also-tools" aria-labelledby="alsoTitle">
+      <div class="also-head">
+        <p class="also-eyebrow">다른 도구 둘러보기</p>
+        <h2 id="alsoTitle">이런 툴도 있어요</h2>
+        <p>지금 쓰는 도구 옆에 있으면 편한 것들입니다. 눌러서 바로 열어 보세요.</p>
+      </div>
+      <div class="also-grid">
+        <a class="also-card" href="typing-test.html">
+          <span class="also-cat cat-life">생활·시간</span>
+          <h3>한글 타자 속도 측정기</h3>
+          <p>분당 타수와 정확도, 최고 기록까지.</p>
+          <span class="also-btn">바로 열기 →</span>
+        </a>
+        <a class="also-card" href="timer.html">
+          <span class="also-cat cat-life">생활·시간</span>
+          <h3>집중 타이머·뽀모도로</h3>
+          <p>25분 집중, 5분 휴식 카운트다운.</p>
+          <span class="also-btn">바로 열기 →</span>
+        </a>
+        <a class="also-card" href="roulette.html">
+          <span class="also-cat cat-life">생활·시간</span>
+          <h3>랜덤 룰렛·제비뽑기</h3>
+          <p>점심 메뉴 못 정할 때 돌려 보세요.</p>
+          <span class="also-btn">바로 열기 →</span>
+        </a>
+        <a class="also-card" href="lotto.html">
+          <span class="also-cat cat-life">생활·시간</span>
+          <h3>로또 번호 생성기</h3>
+          <p>이번 주 행운 번호, 겹치지 않게 6개.</p>
+          <span class="also-btn">바로 열기 →</span>
+        </a>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="logo" href="../index.html">
+          <span class="logo-mark" aria-hidden="true">다</span>
+          <span>다모아툴<span class="logo-sub">DamoaTool</span></span>
+        </a>
+        <p>이모지 복사부터 QR코드·로또 번호 생성까지, 매일 쓰는 17가지 도구를 한곳에 모았습니다. 모든 계산과 변환은 이용자 브라우저 안에서만 처리되며 입력값은 서버로 전송되지 않습니다.</p>
+      </div>
+      <div class="footer-col">
+        <h2>텍스트·SNS</h2>
+        <ul>
+          <li><a href="emoji.html">이모지·특수기호 복사</a></li>
+          <li><a href="font-style.html">줄바꿈·폰트 변환</a></li>
+          <li><a href="char-count.html">글자수·바이트 계산</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>생활·시간</h2>
+        <ul>
+          <li><a href="roulette.html">랜덤 룰렛</a></li>
+          <li><a href="led-board.html">LED 전광판</a></li>
+          <li><a href="timer.html">집중 타이머</a></li>
+          <li><a href="date-calc.html">날짜·D-Day 계산</a></li>
+          <li><a href="qr-gen.html">QR코드 생성</a></li>
+          <li><a href="lotto.html">로또 번호 생성</a></li>
+          <li><a href="reaction-test.html">반응속도 테스트</a></li>
+          <li><a href="typing-test.html">타자 속도 측정</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>금융·세금</h2>
+        <ul>
+          <li><a href="loan-calc.html">대출 이자 계산</a></li>
+          <li><a href="savings-calc.html">예적금 이자 계산</a></li>
+          <li><a href="salary-calc.html">연봉 실수령액</a></li>
+          <li><a href="yearend-check.html">연말정산 체크</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>계산·변환</h2>
+        <ul>
+          <li><a href="percent-calc.html">퍼센트·할인율</a></li>
+          <li><a href="unit-conv.html">평수·단위 변환</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 다모아툴(DamoaTool). 모든 도구는 무료입니다.</p>
+      <p><a href="../about.html">소개</a> · <a href="../terms.html">이용약관</a> · <a href="../privacy.html">개인정보처리방침</a> · 문의 rlatmdrhkd1@gmail.com</p>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/common.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var ROUND = 5;
+  var BEST_KEY = "dtReactionBestV1";
+
+  var stage = document.getElementById("stage");
+  var stageLabel = document.getElementById("stageLabel");
+  var stageBig = document.getElementById("stageBig");
+  var stageSub = document.getElementById("stageSub");
+  var startBtn = document.getElementById("startBtn");
+  var clearBtn = document.getElementById("clearBtn");
+  var avgValue = document.getElementById("avgValue");
+  var avgSub = document.getElementById("avgSub");
+  var bestThisEl = document.getElementById("bestThis");
+  var bestAllEl = document.getElementById("bestAll");
+  var earlyCountEl = document.getElementById("earlyCount");
+  var tryLine = document.getElementById("tryLine");
+  var triesBox = document.getElementById("tries");
+  var gradeLine = document.getElementById("gradeLine");
+
+  var state = "idle"; // idle | waiting | ready | result | early | done
+  var waitTimer = null;
+  var nextTimer = null;
+  var greenAt = 0;
+  var tries = [];
+  var earlyCount = 0;
+  var saved = loadBest();
+
+  function loadBest() {
+    try {
+      var raw = localStorage.getItem(BEST_KEY);
+      if (!raw) return null;
+      var obj = JSON.parse(raw);
+      if (!obj || typeof obj.fastest !== "number") return null;
+      return obj;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function saveBest(obj) {
+    try {
+      localStorage.setItem(BEST_KEY, JSON.stringify(obj));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function fmtMs(n) {
+    return Math.round(n).toLocaleString("ko-KR") + "ms";
+  }
+
+  function setStage(next, label, big, sub) {
+    state = next;
+    stage.setAttribute("data-state", next);
+    if (label != null) stageLabel.textContent = label;
+    if (big != null) stageBig.textContent = big;
+    if (sub != null) stageSub.textContent = sub;
+  }
+
+  function clearWait() {
+    if (waitTimer) {
+      clearTimeout(waitTimer);
+      waitTimer = null;
+    }
+  }
+
+  function clearNext() {
+    if (nextTimer) {
+      clearTimeout(nextTimer);
+      nextTimer = null;
+    }
+  }
+
+  function renderTries() {
+    var html = "";
+    for (var i = 0; i < ROUND; i++) {
+      var v = tries[i];
+      var cls = "rx-try";
+      if (v == null) cls += " pending";
+      var fastest = tries.length ? Math.min.apply(null, tries) : null;
+      if (v != null && tries.length > 1 && v === fastest) cls += " is-best";
+      html += '<div class="' + cls + '"><span class="n">' + (i + 1) + "회</span><span class=\"ms\">" +
+        (v == null ? "-" : Math.round(v).toLocaleString("ko-KR") + "ms") + "</span></div>";
+    }
+    triesBox.innerHTML = html;
+
+    var fastestNow = tries.length ? Math.min.apply(null, tries) : null;
+    bestThisEl.textContent = fastestNow == null ? "-" : fmtMs(fastestNow);
+
+    if (tries.length === 0) {
+      tryLine.textContent = "아직 기록이 없습니다. 5회를 채우면 평균이 나옵니다.";
+    } else if (tries.length < ROUND) {
+      tryLine.textContent = tries.length + "회 측정 완료 · " + (ROUND - tries.length) + "회 남았습니다.";
+    } else {
+      tryLine.textContent = "5회 측정 완료 · 평균과 등급을 확인해 보세요.";
+    }
+  }
+
+  function renderBestAll() {
+    bestAllEl.textContent = saved && typeof saved.fastest === "number" ? fmtMs(saved.fastest) : "-";
+  }
+
+  function gradeOf(avg) {
+    if (avg < 180) return { pct: "상위 1%", text: "감각이 대단히 빠른 편입니다. 게임이나 스포츠에서도 유리한 기록이에요." };
+    if (avg < 200) return { pct: "상위 5%", text: "평균보다 확실히 빠릅니다. 손과 눈의 호흡이 좋은 편입니다." };
+    if (avg < 220) return { pct: "상위 10%", text: "상위권입니다. 꾸준히 재면 200ms 아래도 노려 볼 만합니다." };
+    if (avg < 250) return { pct: "상위 25%", text: "성인 평균(약 250ms)보다 빠릅니다. 안정적인 기록이에요." };
+    if (avg < 280) return { pct: "상위 40%", text: "평균 근처입니다. 손가락 위치와 화면 밝기를 바꾸면 더 빨라집니다." };
+    if (avg < 320) return { pct: "상위 60%", text: "조금 느긴 하지만 정상 범위입니다. 컨디션을 바꿔 다시 재 보세요." };
+    if (avg < 400) return { pct: "상위 80%", text: "피로하거나 집중이 흐트러진 상태일 수 있습니다. 잠시 쉬고 다시 해 보세요." };
+    return { pct: "상위 90%", text: "오늘은 반응이 느린 편입니다. 기기 지연이나 수면 부족을 한 번 확인해 보세요." };
+  }
+
+  function finishRound() {
+    var sum = 0;
+    for (var i = 0; i < tries.length; i++) sum += tries[i];
+    var avg = sum / tries.length;
+    var fastest = Math.min.apply(null, tries);
+
+    clearWait();
+    clearNext();
+    setStage("done", "5회 완료", fmtMs(avg), "평균 반응속도입니다. 다시 측정을 누르면 새로 시작합니다.");
+    startBtn.textContent = "다시 측정";
+
+    avgValue.innerHTML = fmtMs(avg);
+    var g = gradeOf(avg);
+    avgSub.textContent = "평균 " + fmtMs(avg) + " · " + g.pct + " 등급";
+
+    gradeLine.hidden = false;
+    gradeLine.className = "rx-grade" + (avg >= 320 ? " warn" : "");
+    gradeLine.innerHTML = "<b>" + g.pct + "</b> · 이번 판 최고 " + fmtMs(fastest) + "<br>" + g.text;
+
+    var isNew = !saved || avg < saved.avg;
+    if (isNew) {
+      var ok = saveBest({
+        fastest: saved && typeof saved.fastest === "number" ? Math.min(saved.fastest, fastest) : fastest,
+        avg: avg,
+        date: new Date().toISOString().slice(0, 10)
+      });
+      saved = loadBest();
+      renderBestAll();
+      if (ok) DT.toast("새 최고 평균 기록이에요!");
+    } else if (saved && typeof saved.fastest === "number" && fastest < saved.fastest) {
+      saved.fastest = fastest;
+      saved.date = new Date().toISOString().slice(0, 10);
+      saveBest(saved);
+      renderBestAll();
+      DT.toast("가장 빠른 기록을 갱신했어요!");
+    }
+  }
+
+  function record(ms) {
+    tries.push(ms);
+    renderTries();
+    setStage("result", "기록", fmtMs(ms), "잠시 뒤 다음 신호가 나옵니다. 바로 준비하세요.");
+
+    if (saved && typeof saved.fastest === "number" && ms < saved.fastest) {
+      saved.fastest = ms;
+      saved.date = new Date().toISOString().slice(0, 10);
+      saveBest(saved);
+      renderBestAll();
+    }
+
+    if (tries.length >= ROUND) {
+      finishRound();
+    } else {
+      startBtn.textContent = "다음 시도 (" + tries.length + "/" + ROUND + ")";
+      clearNext();
+      nextTimer = setTimeout(function () {
+        nextTimer = null;
+        if (state === "result") beginWait();
+      }, 900);
+    }
+  }
+
+  function beginWait() {
+    clearWait();
+    clearNext();
+    setStage("waiting", "기다리세요", "…", "초록색으로 바뀌면 바로 누르세요.");
+    startBtn.textContent = "측정 중…";
+    var delay = 1200 + Math.random() * 2800;
+    waitTimer = setTimeout(function () {
+      waitTimer = null;
+      if (state !== "waiting") return;
+      greenAt = performance.now();
+      setStage("ready", "지금!", "누르세요!", "");
+    }, delay);
+  }
+
+  function startRound() {
+    clearWait();
+    clearNext();
+    tries = [];
+    earlyCount = 0;
+    earlyCountEl.innerHTML = "0<em>회</em>";
+    renderTries();
+    avgValue.textContent = "-";
+    avgSub.textContent = "5회를 모두 마치면 평균과 등급을 보여 드립니다.";
+    gradeLine.hidden = true;
+    beginWait();
+  }
+
+  function nextStep() {
+    if (tries.length > 0 && tries.length < ROUND) beginWait();
+    else startRound();
+  }
+
+  function onStageActivate() {
+    if (state === "idle") {
+      startRound();
+    } else if (state === "waiting") {
+      clearWait();
+      earlyCount++;
+      earlyCountEl.innerHTML = earlyCount + "<em>회</em>";
+      setStage("early", "너무 빨랐어요", "성급한 클릭", "초록색이 된 뒤에 누르세요. 다시 누르면 이어서 측정합니다.");
+      startBtn.textContent = "다시 시도";
+    } else if (state === "ready") {
+      var ms = performance.now() - greenAt;
+      record(ms);
+    } else if (state === "result") {
+      beginWait();
+    } else if (state === "early") {
+      nextStep();
+    } else {
+      startRound();
+    }
+  }
+
+  stage.addEventListener("click", onStageActivate);
+
+  stage.addEventListener("keydown", function (e) {
+    if (e.key === " " || e.key === "Enter") {
+      e.preventDefault();
+      onStageActivate();
+    }
+  });
+
+  startBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    nextStep();
+  });
+
+  clearBtn.addEventListener("click", function () {
+    try {
+      localStorage.removeItem(BEST_KEY);
+    } catch (err) {}
+    saved = null;
+    renderBestAll();
+    DT.toast("저장된 최고 기록을 지웠습니다");
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (document.activeElement === stage) return;
+    if (e.key === " " && (e.target.tagName === "BODY" || e.target === document.body)) {
+      e.preventDefault();
+      onStageActivate();
+    }
+  });
+
+  renderTries();
+  renderBestAll();
+})();
+</script>
+</body>
+</html>

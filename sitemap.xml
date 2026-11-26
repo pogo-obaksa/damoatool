@@ -97,6 +97,18 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://pogo-obaksa.github.io/damoatool/tools/reaction-test.html</loc>
+    <lastmod>2026-11-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pogo-obaksa.github.io/damoatool/tools/typing-test.html</loc>
+    <lastmod>2026-11-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://pogo-obaksa.github.io/damoatool/about.html</loc>
     <lastmod>2026-11-26</lastmod>
     <changefreq>yearly</changefreq>
